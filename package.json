@@ -1,8 +1,8 @@
 {
   "name": "quasar-app-extension-admin-starter",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "private": false,
-  "description": "Quasar App Extension Admin Starter",
+  "description": "Free Quasar Admin Starter based on Vue.js and used Quasar Framework",
   "author": "AriesZhao <aries.zhao@outlook.com>",
   "license": "MIT",
   "main": "src/index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AriesZhao/admin-template/tree/master/quasar-app-extension-admin-starter"
+    "url": "https://github.com/AriesZhao/quasar-app-extension-admin-starter.git"
   },
   "engines": {
     "node": ">= 8.9.0",
