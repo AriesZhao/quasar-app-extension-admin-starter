@@ -14,7 +14,14 @@
           @click="enableMini = !enableMini"
           :class="{ 'rotate-90': enableMini }"
         />
-        <q-btn dense flat round icon="home" :to="{ path: '/' }" />
+        <q-btn
+          v-if="_appInfo.homePath"
+          dense
+          flat
+          round
+          :icon="_appInfo.homeIcon || 'home'"
+          :to="{ path: _appInfo.homePath }"
+        />
         <TabNav />
         <q-space />
         <!--Header Actions-->
@@ -36,13 +43,13 @@
       show-if-above
       side="left"
       elevated
-      :width="_appInfo.siderWidth"
+      :width="_appInfo.siderWidth || 250"
       :mini-width="60"
       :mini="miniState && enableMini"
       :mini-to-overlay="enableMini"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
-      :content-class="_appInfo.siderClass"
+      :content-class="_appInfo.siderClass || ''"
     >
       <Sidebar @refresh-menus="$emit('refresh-menus')">
         <template v-slot:left-header="props">

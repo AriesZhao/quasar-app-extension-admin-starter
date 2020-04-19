@@ -62,7 +62,6 @@
 
 <script>
 import datatable from "./mixins/datatable";
-import http from "src/utils/http";
 export default {
   mixins: [datatable],
   data() {
@@ -90,10 +89,6 @@ export default {
     }
     if (this.data) {
       this.buildData(this.data);
-    } else if (this.url) {
-      this.fetchData(this.url);
-    } else {
-      this.$q.notify({ message: "数据表定义错误", color: "negative" });
     }
   },
   watch: {
@@ -102,27 +97,6 @@ export default {
     },
   },
   methods: {
-    fetchData(url, data) {
-      let req = {
-        url: url,
-        method: this.method,
-      };
-      if (this.method.toUpperCase() === "GET") {
-        req.param = data;
-      } else {
-        req.data = data;
-      }
-      this.loading = true;
-      http(req)
-        .then((ret) => {
-          this.buildData(ret);
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.$q.notify({ message: "加载数据失败", color: "negative" });
-          this.loading = false;
-        });
-    },
     buildData(data) {
       if (data.length > 0) {
         this.buildColumns(data[0]);

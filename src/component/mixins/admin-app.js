@@ -12,6 +12,12 @@ export default {
     },
     appInfo: {
       type: Object,
+      default() {
+        return {
+          siderWidth: 250,
+          siderClass: "bg-grey-3",
+        };
+      },
     },
     menus: {
       type: Array,
