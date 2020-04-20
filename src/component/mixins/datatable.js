@@ -1,45 +1,45 @@
 export default {
   props: {
-    url: {
-      type: String
-    },
-    method: {
-      type: String,
-      default: 'GET'
+    request: {
+      type: Function,
     },
     title: {
-      type: String
+      type: String,
     },
     data: {
-      type: Array
+      type: Array,
     },
     columns: {
-      type: Array
+      type: Array,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
     excludes: {
-      type: Array
+      type: Array,
     },
     actionColumn: {
       type: String,
-      default: 'actions'
+      default: "actions",
     },
     rowsPerPage: {
       type: Number,
-      default: 50
+      default: 50,
     },
     stickyFirst: {
       type: Boolean,
-      default: false
+      default: false,
     },
     stickyLast: {
       type: Boolean,
-      default: false
+      default: false,
     },
     rowsPerPageOptions: {
       type: Array,
-      default () {
-        return [50, 100, 200, 500]
-      }
-    }
-  }
-}
+      default() {
+        return [50, 100, 200, 500];
+      },
+    },
+  },
+};

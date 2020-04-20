@@ -2,7 +2,7 @@
   <q-table
     class="datatable"
     :filter="filter"
-    :loading="loading"
+    :loading="isLoading"
     :title="title"
     separator="cell"
     :data="tableData"
@@ -29,7 +29,7 @@
             stickyFirstColumn && index == 0 ? 'sticky-first' : '',
             stickyLastColumn && index == tableColumns.length - 1
               ? 'sticky-last'
-              : ''
+              : '',
           ]"
         >
           <slot :name="`body-header-${col.name}`" :row="props.row">
@@ -48,7 +48,7 @@
             stickyFirstColumn && index == 0 ? 'sticky-first' : '',
             stickyLastColumn && index == tableColumns.length - 1
               ? 'sticky-last'
-              : ''
+              : '',
           ]"
         >
           <slot :name="`body-cell-${col.name}`" :row="props.row">
@@ -61,14 +61,13 @@
 </template>
 
 <script>
-import datatable from './props/datatable'
-import http from 'src/utils/http'
+import datatable from "./mixins/datatable";
 export default {
   mixins: [datatable],
-  data () {
+  data() {
     return {
+      isLoading: false,
       filter: null,
-      loading: false,
       stickyFirstColumn: false,
       stickyLastColumn: false,
       tableData: [],
@@ -77,96 +76,86 @@ export default {
         sortBy: null,
         descending: false,
         page: 1,
-        rowsPerPage: 100
-      }
-    }
+        rowsPerPage: 100,
+      },
+    };
   },
-  mounted () {
-    this.pagination.rowsPerPage = this.rowsPerPage
-    this.stickyFirstColumn = this.stickyFirst
-    this.stickyLastColumn = this.stickyLast
+  mounted() {
+    this.pagination.rowsPerPage = this.rowsPerPage;
+    this.stickyFirstColumn = this.stickyFirst;
+    this.stickyLastColumn = this.stickyLast;
+    this.isLoading = this.loading;
     if (this.columns) {
-      this.tableColumns = this.columns
+      this.tableColumns = this.columns;
     }
     if (this.data) {
-      this.buildData(this.data)
-    } else if (this.url) {
-      this.fetchData(this.url)
-    } else {
-      this.$q.notify({ message: '数据表定义错误', color: 'negative' })
+      this.buildData(this.data);
+    } else if (this.request) {
+      this.isLoading = true;
+      this.request()
+        .then((ret) => {
+          this.buildData(ret);
+          this.isLoading = false;
+        })
+        .catch((err) => {
+          this.$q.notify({ message: "加载数据错误", color: "negative" });
+          console.info(err);
+        });
     }
   },
   watch: {
-    data (val) {
-      this.buildData(val)
+    data(val) {
+      this.buildData(val);
+    },
+    loading(val){
+      this.isLoading = val
     }
   },
   methods: {
-    fetchData (url, data) {
-      let req = {
-        url: url,
-        method: this.method
-      }
-      if (this.method.toUpperCase() === 'GET') {
-        req.param = data
-      } else {
-        req.data = data
-      }
-      this.loading = true
-      http(req)
-        .then(ret => {
-          this.buildData(ret)
-          this.loading = false
-        })
-        .catch(e => {
-          this.$q.notify({ message: '加载数据失败', color: 'negative' })
-          this.loading = false
-        })
-    },
-    buildData (data) {
+    buildData(data) {
       if (data.length > 0) {
-        this.buildColumns(data[0])
+        this.buildColumns(data[0]);
       }
-      this.tableData = data
+      this.tableData = data;
     },
-    buildColumns (row) {
+    buildColumns(row) {
       if (this.columns) {
-        this.tableColumns = this.columns
+        this.tableColumns = this.columns;
       } else {
-        const columns = []
+        const columns = [];
         for (const key in row) {
           if (
             !this.excludes ||
-            !this.excludes.find(item => {
-              return item === key
+            !this.excludes.find((item) => {
+              return item === key;
             })
           ) {
             columns.push({
               name: key,
               field: key,
               label: key,
-              align: 'center',
-              sortable: true
-            })
+              align: "center",
+              sortable: true,
+            });
           }
         }
-        this.tableColumns = columns
+        this.tableColumns = columns;
       }
       if (
         this.$scopedSlots[`body-cell-${this.actionColumn}`] || [
-          `body-cell-${this.actionColumn}`
+          `body-cell-${this.actionColumn}`,
         ]
       ) {
         this.tableColumns.push({
           name: this.actionColumn,
-          label: '操作',
-          align: 'center'
-        })
-        this.stickyLastColumn = true
+          label: "操作",
+          align: "center",
+        });
+        this.stickyLastColumn = true;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="sass">
