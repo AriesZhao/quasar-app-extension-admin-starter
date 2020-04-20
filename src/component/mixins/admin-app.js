@@ -1,22 +1,33 @@
 import * as constants from "../../store/constants";
 import base from "../layout/base";
 import { buildMenus } from "../../utils/menu";
-import * as helper from "../../utils/helper";
 
 export default {
   mixins: [base],
   props: {
+    siderWidth: {
+      type: Number,
+      default: 250,
+    },
+    siderClass: {
+      type: String,
+      default: "bg-grey-3",
+    },
     appKey: {
       type: String,
       default: "admin-app",
     },
+    homePath: {
+      type: String,
+    },
+    homeIcon: {
+      type: String,
+      default: "home",
+    },
     appInfo: {
       type: Object,
       default() {
-        return {
-          siderWidth: 250,
-          siderClass: "bg-grey-3",
-        };
+        return {};
       },
     },
     menus: {

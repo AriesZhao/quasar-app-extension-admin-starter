@@ -3,6 +3,7 @@
     <template v-if="data.children && data.children.length > 0">
       <q-expansion-item
         expand-separator
+        :header-class="prop(data, 'class', '')"
         :icon="prop(data, 'icon', 'la la-list')"
         :label="prop(data, 'title')"
         :style="{ 'padding-left': level * 10 + 'px' }"
@@ -19,6 +20,7 @@
     </template>
     <template v-else>
       <q-item
+        :class="[prop(data, 'class', '')]"
         :style="{ 'padding-left': level * 10 + 15 + 'px' }"
         :to="prop(data, 'url')"
         clickable
@@ -39,12 +41,12 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true
+      required: true,
     },
     level: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     prop(menu, key, defaultVal) {
@@ -57,8 +59,8 @@ export default {
       } else {
         return null;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
