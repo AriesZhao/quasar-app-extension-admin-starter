@@ -4,7 +4,7 @@
       class="bg-grey-2 tab-toolbar"
       :style="{ 'padding-right': _appInfo.siderWidth + 15 + 'px' }"
     >
-      <q-breadcrumbs active-color="primary" style="font-size: 16px">
+      <q-breadcrumbs active-color="primary" style="font-size: 16px;">
         <q-breadcrumbs-el
           v-for="item in $route.matched"
           :key="item.path"
@@ -45,9 +45,10 @@
         <q-card
           class="no-box-shadow h100"
           :style="{ background: background || 'white' }"
-          ><q-scroll-area class="fit">
+          ><q-scroll-area class="fit" v-if="scroll">
             <slot />
           </q-scroll-area>
+          <slot v-if="!scroll" />
         </q-card>
       </div>
     </div>
@@ -60,22 +61,30 @@ import base from "./layout/base";
 export default {
   name: "Panel",
   mixins: [base],
-  props: ["background"],
+  props: {
+    background: {
+      type: String,
+    },
+    scroll: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
-      tabClosed: false
+      tabClosed: false,
     };
   },
   computed: {
     favority() {
-      return this._favorities.find(item => {
+      return this._favorities.find((item) => {
         return item.url === this.$route.path;
       });
-    }
+    },
   },
   mounted() {
     // 监听Tab关闭
-    this.$root.$on("closeTab", path => {
+    this.$root.$on("closeTab", (path) => {
       if (this.$route.path === path) {
         this.tabClosed = true;
       }
@@ -89,7 +98,7 @@ export default {
   },
   methods: {
     close() {
-      let tabToClose = this.tabList.find(item => {
+      let tabToClose = this.tabList.find((item) => {
         return item.url === this.$route.path;
       });
       if (tabToClose) {
@@ -103,12 +112,12 @@ export default {
           this.$route.params.title ||
           this.$route.query.title ||
           this.$route.meta.title,
-        url: this.$route.path
+        url: this.$route.path,
       });
     },
     removeFavority() {
       this[constants.REMOVE_FAVORITY](this.favority);
-    }
-  }
+    },
+  },
 };
 </script>

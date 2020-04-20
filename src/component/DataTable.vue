@@ -3,13 +3,15 @@
     class="datatable"
     :filter="filter"
     :loading="isLoading"
-    :title="title"
     separator="cell"
     :data="tableData"
     :columns="tableColumns"
     :pagination.sync="pagination"
     :rows-per-page-options="rowsPerPageOptions"
   >
+    <template v-slot:top-left>
+      <span v-if="title" class="table-title">{{ title }}</span>
+    </template>
     <template v-slot:top-right>
       <div class="row q-gutter-sm">
         <q-input outlined dense v-model="filter" placeholder="查找">
@@ -33,6 +35,23 @@
           ]"
         >
           <slot :name="`body-header-${col.name}`" :row="props.row">
+            <q-icon
+              v-if="pagination.sortBy !== col.name"
+              name="fa fa-angle-down"
+              class="cursor-pointer"
+              @click="sort(col.field, true)"
+            />
+            <q-icon
+              v-if="pagination.sortBy === col.name && pagination.descending"
+              name="fa fa-angle-down"
+              class="cursor-pointer"
+              @click="sort(col.field, true)"
+            /><q-icon
+              v-if="pagination.sortBy === col.name && !pagination.descending"
+              name="fa fa-angle-up"
+              class="cursor-pointer"
+              @click="sort(col.field, false)"
+            />
             {{ col.label }}
           </slot>
         </q-th>
@@ -107,11 +126,15 @@ export default {
     data(val) {
       this.buildData(val);
     },
-    loading(val){
-      this.isLoading = val
-    }
+    loading(val) {
+      this.isLoading = val;
+    },
   },
   methods: {
+    sort(field, descending) {
+      this.pagination.sortBy = field;
+      this.pagination.descending = descending;
+    },
     buildData(data) {
       if (data.length > 0) {
         this.buildColumns(data[0]);
@@ -164,6 +187,9 @@ export default {
 
   max-width: 100%
 
+  .table-title
+      font-size: 16px
+
   tr th
     position: sticky
     z-index: 2
@@ -182,7 +208,7 @@ export default {
     z-index: 1
 
   .q-table__top
-    padding: 20px 15px;
+    padding: 15px
 
   .sticky-first
     background: #fafafa
