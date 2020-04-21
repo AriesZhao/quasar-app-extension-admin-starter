@@ -35,23 +35,6 @@
           ]"
         >
           <slot :name="`body-header-${col.name}`" :row="props.row">
-            <q-icon
-              v-if="pagination.sortBy !== col.name"
-              name="fa fa-angle-down"
-              class="cursor-pointer"
-              @click="sort(col.field, true)"
-            />
-            <q-icon
-              v-if="pagination.sortBy === col.name && pagination.descending"
-              name="fa fa-angle-down"
-              class="cursor-pointer"
-              @click="sort(col.field, true)"
-            /><q-icon
-              v-if="pagination.sortBy === col.name && !pagination.descending"
-              name="fa fa-angle-up"
-              class="cursor-pointer"
-              @click="sort(col.field, false)"
-            />
             {{ col.label }}
           </slot>
         </q-th>
@@ -131,10 +114,6 @@ export default {
     },
   },
   methods: {
-    sort(field, descending) {
-      this.pagination.sortBy = field;
-      this.pagination.descending = descending;
-    },
     buildData(data) {
       if (data.length > 0) {
         this.buildColumns(data[0]);
@@ -194,6 +173,7 @@ export default {
     position: sticky
     z-index: 2
     background: #fafafa
+    text-align: center
 
   thead tr:last-child th
     top: 48px
