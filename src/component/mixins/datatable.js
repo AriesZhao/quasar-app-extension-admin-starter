@@ -1,7 +1,7 @@
 export default {
   props: {
-    url: {
-      type: String
+    request: {
+      type: Function
     },
     method: {
       type: String,
