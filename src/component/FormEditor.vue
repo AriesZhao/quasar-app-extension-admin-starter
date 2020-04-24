@@ -1,5 +1,5 @@
 <template>
-  <panel>
+  <panel v-bind="$props">
     <template slot="actions">
       <div class="q-gutter-sm">
         <q-btn
@@ -40,9 +40,10 @@
 
 <script>
 import CRUD from "./mixins/crud";
+import Panel from "./Panel";
 export default {
   name: "FormEditor",
-  mixins: [CRUD],
+  mixins: [CRUD, Panel],
   props: {
     actoin: {
       type: String,
@@ -51,7 +52,7 @@ export default {
   methods: {
     cancel() {
       this.status = "view";
-    }
+    },
   },
 };
 </script>
