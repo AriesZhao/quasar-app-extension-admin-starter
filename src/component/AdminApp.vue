@@ -126,7 +126,16 @@ export default {
     }
     this.$store.registerModule(constants.NAMESPACE, adminStore);
     router(this.$router);
-    let tab = this.tabList.find((item) => {
+    const existing = this.tabList.find((item) => {
+      return item.url === this.$route.path;
+    });
+    if (!existing) {
+      this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
+        url: this.$route.path,
+        title:  this.$route.params.title ||  this.$route.query.title || this.$route.meta.title,
+      });
+    }
+    const tab = this.tabList.find((item) => {
       return item.selected;
     });
     if (tab && tab.url !== this.$route.path) {

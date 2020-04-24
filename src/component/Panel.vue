@@ -43,9 +43,13 @@
     <div class="panel-content">
       <div class="q-pa-sm content-wrapper">
         <q-card
-          class="no-box-shadow h100"
-          :style="{ background: background || 'white' }"
-          ><q-scroll-area class="fit">
+          class="no-box-shadow"
+          :style="{
+            background: background || 'white',
+            width: width,
+            height: height 
+          }"
+          ><q-scroll-area class="fit" v-if="scroll">
             <slot />
           </q-scroll-area>
         </q-card>
@@ -57,10 +61,19 @@
 <script>
 import * as constants from "../store/constants";
 import base from "./layout/base";
+import panel from "./mixins/panel";
 export default {
   name: "Panel",
-  mixins: [base],
-  props: ["background"],
+  mixins: [base, panel],
+  props: {
+    background: {
+      type: String,
+    },
+    scroll: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       tabClosed: false

@@ -1,6 +1,6 @@
 {
   "name": "quasar-app-extension-admin-starter",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": false,
   "description": "Free Quasar Admin Starter based on Vue.js and used Quasar Framework",
   "author": "AriesZhao <aries.zhao@outlook.com>",
