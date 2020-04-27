@@ -7,12 +7,13 @@ export default {
       logo: "",
       title: "Admin-Template",
       siderWidth: 250,
-      siderClass: "bg-grey-3"
+      siderClass: "bg-grey-3",
     },
     [constants.Menus]: [],
     [constants.Favorites]: [],
     [constants.TabList]: [],
-    [constants.ActivedTab]: null
+    [constants.ActivedTab]: null,
+    lastTab: null,
   },
   getters: {},
   mutations: {
@@ -24,8 +25,14 @@ export default {
     },
     //open new tab
     [constants.OPEN_TAB](state, payload) {
-      var opened = false;
-      state[constants.TabList].forEach(item => {
+      // store last tab
+      state[constants.TabList].forEach((item) => {
+        if (item.selected) {
+          state.lastTab = item;
+        }
+      });
+      let opened = false;
+      state[constants.TabList].forEach((item) => {
         if (item.url === payload.url) {
           opened = true;
           item.selected = true;
@@ -49,14 +56,21 @@ export default {
       } else {
         return;
       }
+      if (state.lastTab !== null && payload.url === state.lastTab.url) {
+        state.lastTab = null;
+      }
       if (payload.selected) {
-        if (tabList.length < 1) {
-          this.$router.replace({ path: "/" });
+        if (state.lastTab !== null) {
+          this.$router.replace({ path: state.lastTab.url });
+        } else if (tabList.length < 1) {
+          if (this.$router.currentRoute.path !== "/") {
+            this.$router.replace({ path: "/" });
+          }
         } else if (tabIndex > tabList.length - 1) {
           state[constants.ActivedTab] = tabList[tabList.length - 1];
           tabList[tabList.length - 1].selected = true;
           this.$router.replace({
-            path: tabList[tabList.length - 1].url
+            path: tabList[tabList.length - 1].url,
           });
         } else if (tabIndex < 1) {
           state[constants.ActivedTab] = tabList[0];
@@ -66,7 +80,7 @@ export default {
           state[constants.ActivedTab] = tabList[tabIndex - 1];
           tabList[tabIndex - 1].selected = true;
           this.$router.replace({
-            path: tabList[tabIndex - 1].url
+            path: tabList[tabIndex - 1].url,
           });
         }
       }
@@ -79,7 +93,7 @@ export default {
     // add favority
     [constants.ADD_FAVORITY](state, payload) {
       if (
-        !state[constants.Favorites].find(item => {
+        !state[constants.Favorites].find((item) => {
           return item.url === payload.url;
         })
       ) {
@@ -92,6 +106,6 @@ export default {
       if (index > -1) {
         state[constants.Favorites].splice(index, 1);
       }
-    }
-  }
+    },
+  },
 };

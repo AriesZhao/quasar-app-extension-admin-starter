@@ -39,7 +39,10 @@
       <div class="q-pa-sm">
         <q-tree :nodes="nodes" :node-key="nodeKey" default-expand-all>
           <template v-slot:default-header="props">
-            <div @click.stop="choose(props.node)" class="cursor-pointer">
+            <div
+              @click.stop="choose(props.node)"
+              :class="{ 'cursor-pointer': readonly }"
+            >
               <slot name="tree-node" :node="props.node" />
             </div>
           </template>

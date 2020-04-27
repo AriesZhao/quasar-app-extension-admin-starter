@@ -144,9 +144,11 @@ export default {
         this.tableColumns = columns;
       }
       if (
-        this.$scopedSlots[`body-cell-${this.actionColumn}`] || [
-          `body-cell-${this.actionColumn}`,
-        ]
+        !this.tableColumns.find((item) => {
+          return item.name === this.actionColumn;
+        }) &&
+        (this.$scopedSlots[`body-cell-${this.actionColumn}`] ||
+          this.$slots[`body-cell-${this.actionColumn}`])
       ) {
         this.tableColumns.push({
           name: this.actionColumn,

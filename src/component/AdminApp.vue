@@ -129,10 +129,13 @@ export default {
     const existing = this.tabList.find((item) => {
       return item.url === this.$route.path;
     });
-    if (!existing) {
+    if (!existing && !(this.$route.meta && this.$route.meta.tab === false)) {
       this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
         url: this.$route.path,
-        title:  this.$route.params.title ||  this.$route.query.title || this.$route.meta.title,
+        title:
+          this.$route.params.title ||
+          this.$route.query.title ||
+          this.$route.meta.title,
       });
     }
     const tab = this.tabList.find((item) => {
