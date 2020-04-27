@@ -14,7 +14,14 @@
           @click="enableMini = !enableMini"
           :class="{ 'rotate-90': enableMini }"
         />
-        <q-btn dense flat round icon="home" :to="{ path: '/' }" />
+        <q-btn
+          v-if="homePath"
+          dense
+          flat
+          round
+          :icon="homeIcon"
+          :to="{ path: homePath }"
+        />
         <TabNav />
         <q-space />
         <!--Header Actions-->
@@ -122,10 +129,16 @@ export default {
     const existing = this.tabList.find((item) => {
       return item.url === this.$route.path;
     });
-    if (!existing) {
+    if (
+      !existing &&
+      (this.$route.meta === null || this.$route.meta.tab === true)
+    ) {
       this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
         url: this.$route.path,
-        title:  this.$route.params.title ||  this.$route.query.title || this.$route.meta.title,
+        title:
+          this.$route.params.title ||
+          this.$route.query.title ||
+          this.$route.meta.title,
       });
     }
     const tab = this.tabList.find((item) => {
