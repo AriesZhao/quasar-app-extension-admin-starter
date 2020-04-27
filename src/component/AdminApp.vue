@@ -129,10 +129,7 @@ export default {
     const existing = this.tabList.find((item) => {
       return item.url === this.$route.path;
     });
-    if (
-      !existing &&
-      (this.$route.meta === null || this.$route.meta.tab === true)
-    ) {
+    if (!existing && !(this.$route.meta && this.$route.meta.tab === false)) {
       this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
         url: this.$route.path,
         title:

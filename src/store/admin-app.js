@@ -13,6 +13,7 @@ export default {
     [constants.Favorites]: [],
     [constants.TabList]: [],
     [constants.ActivedTab]: null,
+    lastTab: null,
   },
   getters: {},
   mutations: {
@@ -24,7 +25,13 @@ export default {
     },
     //open new tab
     [constants.OPEN_TAB](state, payload) {
-      var opened = false;
+      // store last tab
+      state[constants.TabList].forEach((item) => {
+        if (item.selected) {
+          state.lastTab = item;
+        }
+      });
+      let opened = false;
       state[constants.TabList].forEach((item) => {
         if (item.url === payload.url) {
           opened = true;
@@ -49,8 +56,13 @@ export default {
       } else {
         return;
       }
+      if (state.lastTab !== null && payload.url === state.lastTab.url) {
+        state.lastTab = null;
+      }
       if (payload.selected) {
-        if (tabList.length < 1) {
+        if (state.lastTab !== null) {
+          this.$router.replace({ path: state.lastTab.url });
+        } else if (tabList.length < 1) {
           if (this.$router.currentRoute.path !== "/") {
             this.$router.replace({ path: "/" });
           }
