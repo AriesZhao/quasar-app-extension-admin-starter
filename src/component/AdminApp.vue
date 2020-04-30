@@ -19,7 +19,7 @@
           dense
           flat
           round
-          :icon="homeIcon"
+          :icon="homeIcon || 'home'"
           :to="{ path: homePath }"
         />
         <TabNav />
@@ -43,13 +43,13 @@
       show-if-above
       side="left"
       elevated
-      :width="_appInfo.siderWidth"
+      :width="siderWidth || 250"
       :mini-width="60"
       :mini="miniState && enableMini"
       :mini-to-overlay="enableMini"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
-      :content-class="_appInfo.siderClass"
+      :content-class="siderClass || ''"
     >
       <Sidebar @refresh-menus="$emit('refresh-menus')">
         <template v-slot:left-header="props">

@@ -2,13 +2,13 @@ import { uid } from "quasar";
 
 export function buildMenus(routes) {
   let menu = [];
-  routes.forEach(item => {
+  routes.forEach((item) => {
     if (item.meta && item.meta.menu === false) {
       //skip
     } else if (item.meta && item.meta.tab === false) {
       //skip
     } else if (item instanceof Array) {
-      item.forEach(subItem => {
+      item.forEach((subItem) => {
         menu.push(routerToMenu(subItem, ""));
       });
     } else {
@@ -23,11 +23,12 @@ function routerToMenu(route, path) {
   let menu = {
     id: uid(),
     title: route.meta ? route.meta.title : route.path,
-    icon: route.meta ? route.meta.icon : "fa fa-angle-right"
+    icon: route.meta ? route.meta.icon : "la la-angle-right",
+    class: route.meta ? route.meta.class : "",
   };
   if (route.children && route.children.length > 0) {
     menu.children = [];
-    route.children.forEach(element => {
+    route.children.forEach((element) => {
       if (!element.props) {
         menu.children.push(routerToMenu(element, path + "/" + route.path));
       }

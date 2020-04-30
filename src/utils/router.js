@@ -4,6 +4,8 @@ const OPEN_TAB = constants.NAMESPACE + "/" + constants.OPEN_TAB;
 function isTab(to) {
   if (to.meta.tab !== null && to.meta.tab === false) {
     return false;
+  } else if (to.meta.root === true) {
+    return false;
   }
   return true;
 }
