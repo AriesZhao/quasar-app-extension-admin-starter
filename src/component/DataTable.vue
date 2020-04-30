@@ -190,7 +190,8 @@ export default {
     z-index: 1
 
   .q-table__top
-    padding: 15px
+    min-height: 50px
+    padding: 5px 15px
 
   .sticky-first
     background: #fafafa

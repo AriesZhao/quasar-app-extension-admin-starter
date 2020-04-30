@@ -11,7 +11,7 @@
     >
       <template v-slot:before>
         <q-card flat class="no-border-radius">
-          <q-toolbar class="toolbar bg-grey-3">
+          <q-toolbar class="toolbar bg-grey-3" v-if="leftTitle || $slots['left-actions']">
             <q-toolbar-title>
               {{ leftTitle }}
             </q-toolbar-title>
@@ -23,7 +23,7 @@
       </template>
       <template v-slot:after>
         <q-card flat class="no-border-radius">
-          <q-toolbar class="toolbar bg-grey-3">
+          <q-toolbar class="toolbar bg-grey-3" v-if="rightTitle || $slots['right-actions']">
             <q-toolbar-title>
               {{ rightTitle }}
             </q-toolbar-title>
@@ -50,6 +50,6 @@ export default {
 .panel .toolbar {
   position: sticky;
   top: 0px;
-  z-index: 1;
+  z-index: 2;
 }
 </style>
