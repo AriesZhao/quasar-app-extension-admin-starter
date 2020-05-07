@@ -1,7 +1,14 @@
 <template>
   <split-panel v-bind="$props">
     <template slot="left-actions">
-      <q-btn icon="refresh" flat color="primary" v-if="readonly" @click="refresh"/>
+      <q-btn
+        icon="refresh"
+        flat
+        color="primary"
+        v-if="readonly"
+        @click="refresh"
+        dense
+      />
     </template>
     <template slot="right-actions">
       <div class="q-gutter-sm">

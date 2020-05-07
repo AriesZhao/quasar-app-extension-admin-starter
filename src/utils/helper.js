@@ -140,3 +140,13 @@ export function buildTree(list, root) {
   });
   return tree;
 }
+
+export function updateTree(tree, entity) {
+  tree.forEach((node) => {
+    if (node.id === entity.id) {
+      Object.assign(node, entity);
+    } else if (node.children && node.children.length > 0) {
+      updateTree(node.children, entity);
+    }
+  });
+}
