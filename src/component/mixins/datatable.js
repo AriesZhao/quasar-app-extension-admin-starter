@@ -1,45 +1,60 @@
 export default {
+  model: {
+    prop: "selected",
+    event: "change",
+  },
   props: {
     request: {
-      type: Function
+      type: Function,
+    },
+    rowKey: {
+      type: String,
+      default: "id",
     },
     method: {
       type: String,
-      default: 'GET'
+      default: "GET",
     },
     title: {
-      type: String
+      type: String,
     },
     data: {
-      type: Array
+      type: Array,
+    },
+    selected: {
+      type: Array,
+      default: [],
+    },
+    selection: {
+      type: String,
     },
     columns: {
-      type: Array
+      type: Array,
     },
     excludes: {
-      type: Array
+      type: Array,
     },
     actionColumn: {
       type: String,
-      default: 'actions'
+      default: "actions",
     },
     rowsPerPage: {
       type: Number,
-      default: 50
+      default: 50,
     },
     stickyFirst: {
       type: Boolean,
-      default: false
+      default: false,
     },
     stickyLast: {
       type: Boolean,
-      default: false
+      default: false,
     },
     rowsPerPageOptions: {
       type: Array,
-      default () {
-        return [50, 100, 200, 500]
-      }
-    }
-  }
-}
+      default() {
+        return [50, 100, 200, 500];
+      },
+    },
+  },
+};
