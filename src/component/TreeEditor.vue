@@ -1,5 +1,15 @@
 <template>
   <split-panel v-bind="$props">
+    <template slot="left-actions">
+      <q-btn
+        icon="refresh"
+        flat
+        color="primary"
+        v-if="readonly"
+        @click="refresh"
+        dense
+      />
+    </template>
     <template slot="right-actions">
       <div class="q-gutter-sm">
         <q-btn
@@ -64,7 +74,7 @@
 import CRUD from "./mixins/crud";
 import SplitPanel from "./mixins/split-panel";
 export default {
-  name: "ListEditor",
+  name: "TreeEditor",
   mixins: [CRUD, SplitPanel],
   props: {
     nodes: {
@@ -93,11 +103,15 @@ export default {
     this.node = this.entity;
   },
   methods: {
+    refresh() {
+      this.$parent.refresh && this.$parent.refresh();
+      this.$emit("refresh");
+    },
     choose(node) {
       if (this.readonly) {
         this.status = "view";
         let ret = {};
-        Object.assign(ret, node.data);
+        Object.assign(ret, node);
         this.lastNode = ret;
         this.node = ret;
         this.$emit("change", this.node);

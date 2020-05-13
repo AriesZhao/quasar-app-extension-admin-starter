@@ -9,7 +9,7 @@ export function arrayToTree(array, rootKey, idField, parentField) {
   const ret = [];
   const id = idField || "id";
   const parentId = parentField || "parentId";
-  array.forEach(item => {
+  array.forEach((item) => {
     if (!isEmpty(rootKey) && item[parentId] === rootKey) {
       let node = {};
       Object.assign(node, item);
@@ -26,7 +26,7 @@ export function arrayToTree(array, rootKey, idField, parentField) {
 }
 
 function buildTreeNode(array, parent, idField, parentField) {
-  array.forEach(item => {
+  array.forEach((item) => {
     if (item[parentField] === parent[idField]) {
       let node = {};
       Object.assign(node, item);
@@ -41,7 +41,7 @@ function buildTreeNode(array, parent, idField, parentField) {
 
 export function convertArray(array, convertFun) {
   let ret = [];
-  array.forEach(item => {
+  array.forEach((item) => {
     var obj = convertFun(item);
     if (obj) {
       ret.push(obj);
@@ -52,7 +52,7 @@ export function convertArray(array, convertFun) {
 
 export function treeToArray(tree, filter) {
   let ret = [];
-  tree.forEach(element => {
+  tree.forEach((element) => {
     if (filter && filter(element)) {
       let item = {};
       Object.assign(item, element);
@@ -73,7 +73,7 @@ export function treeToArray(tree, filter) {
 
 export function filterTree(tree, filterFn) {
   let ret = [];
-  tree.forEach(element => {
+  tree.forEach((element) => {
     if (filterFn(element)) {
       ret.push(element);
     } else if (element.children && element.children.length > 0) {
@@ -89,7 +89,7 @@ export function filterTree(tree, filterFn) {
 
 export function findInTree(tree, filterFn) {
   let ret = null;
-  tree.forEach(element => {
+  tree.forEach((element) => {
     if (filterFn(element)) {
       ret = {};
       Object.assign(ret, element);
@@ -108,7 +108,7 @@ export function findChildren(node, value, prop) {
   var ret = [];
   ret.push(node[prop || "id"]);
   if (node.children && node.children.length > 0) {
-    node.children.forEach(item => {
+    node.children.forEach((item) => {
       ret = ret.concat(findChildren(item, item[prop || "id"], prop));
     });
   }
@@ -116,11 +116,37 @@ export function findChildren(node, value, prop) {
 }
 
 export function visitTree(tree, hanlder) {
-  tree.forEach(node => {
+  tree.forEach((node) => {
     if (node.children && node.children.length > 0) {
       visitTree(node.children, hanlder);
     } else {
       hanlder(node);
+    }
+  });
+}
+
+export function buildTree(list, root) {
+  let tree = [];
+  list.forEach((item) => {
+    if ((isEmpty(root) && isEmpty(item.parentId)) || item.parentId === root) {
+      let node = {};
+      node = Object.assign(node, item);
+      let children = buildTree(list, item.id);
+      if (children.length > 0) {
+        node.children = children;
+      }
+      tree.push(node);
+    }
+  });
+  return tree;
+}
+
+export function updateTree(tree, entity) {
+  tree.forEach((node) => {
+    if (node.id === entity.id) {
+      Object.assign(node, entity);
+    } else if (node.children && node.children.length > 0) {
+      updateTree(node.children, entity);
     }
   });
 }
