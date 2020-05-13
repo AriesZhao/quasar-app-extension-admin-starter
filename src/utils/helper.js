@@ -125,6 +125,12 @@ export function visitTree(tree, hanlder) {
   });
 }
 
+/**
+ * 构建树结构
+ *
+ * @param {Array} list
+ * @param {String} root
+ */
 export function buildTree(list, root) {
   let tree = [];
   list.forEach((item) => {
@@ -141,12 +147,32 @@ export function buildTree(list, root) {
   return tree;
 }
 
-export function updateTree(tree, entity) {
+/**
+ * 更新树结构
+ *
+ * @param {Array} tree
+ * @param {Object} entity
+ * @param {Boolean} insert
+ */
+export function updateTree(tree, entity, insert) {
   tree.forEach((node) => {
-    if (node.id === entity.id) {
-      Object.assign(node, entity);
-    } else if (node.children && node.children.length > 0) {
-      updateTree(node.children, entity);
+    if (insert) {
+      if (!entity.parentId) {
+        tree.push(entity);
+      } else if (node.id === entity.parentId) {
+        if (!node.children) {
+          node.children = [];
+        }
+        node.children.push(entity);
+      } else if (node.children) {
+        updateTree(node.children, entity, insert);
+      }
+    } else {
+      if (node.id === entity.id) {
+        Object.assign(node, entity);
+      } else if (node.children && node.children.length > 0) {
+        updateTree(node.children, entity, insert);
+      }
     }
   });
 }
