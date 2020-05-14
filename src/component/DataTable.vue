@@ -1,65 +1,92 @@
 <template>
-  <q-table
-    class="datatable"
-    :filter="filter"
-    :loading="isLoading"
-    separator="cell"
-    :data="tableData"
-    :columns="tableColumns"
-    :pagination.sync="pagination"
-    :rows-per-page-options="rowsPerPageOptions"
-  >
-    <template v-slot:top-left>
-      <span v-if="title" class="table-title">{{ title }}</span>
-    </template>
-    <template v-slot:top-right>
-      <div class="row q-gutter-sm">
-        <q-input outlined dense v-model="filter" placeholder="查找">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </div>
-    </template>
-    <template v-slot:header="props">
-      <q-tr :props="props">
-        <q-th
-          :key="col.name"
-          :props="props"
-          v-for="(col, index) in tableColumns"
-          :class="[
-            stickyFirstColumn && index == 0 ? 'sticky-first' : '',
-            stickyLastColumn && index == tableColumns.length - 1
-              ? 'sticky-last'
-              : '',
-          ]"
-        >
-          <slot :name="`body-header-${col.name}`" :row="props.row">
-            {{ col.label }}
-          </slot>
-        </q-th>
-      </q-tr>
-    </template>
-    <template v-slot:body="props">
-      <q-tr :props="props">
-        <q-td
-          :key="col.name"
-          :props="props"
-          v-for="(col, index) in tableColumns"
-          :class="[
-            stickyFirstColumn && index == 0 ? 'sticky-first' : '',
-            stickyLastColumn && index == tableColumns.length - 1
-              ? 'sticky-last'
-              : '',
-          ]"
-        >
-          <slot :name="`body-cell-${col.name}`" :row="props.row">
-            {{ props.row[col.name] }}
-          </slot>
-        </q-td>
-      </q-tr>
-    </template>
-  </q-table>
+  <div class="datatable">
+    <q-table
+      :filter="filter"
+      :loading="isLoading"
+      separator="cell"
+      :data="tableData"
+      :columns="tableColumns"
+      :pagination.sync="pagination"
+      :rows-per-page-options="rowsPerPageOptions"
+    >
+      <!--top left-->
+      <template v-slot:top-left>
+        <div class="row">
+          <div v-if="title" class="table-title">{{ title }}</div>
+          <div v-if="editable">
+            <q-btn icon="add" dense flat color="primary" @click="createItem" />
+            <q-btn icon="remove" dense flat color="negative" />
+          </div>
+        </div>
+      </template>
+      <!--top right-->
+      <template v-slot:top-right>
+        <div class="row q-gutter-sm">
+          <q-input outlined dense v-model="filter" placeholder="查找">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+      </template>
+      <!--table header-->
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th
+            :key="col.name"
+            :props="props"
+            v-for="(col, index) in tableColumns"
+            :class="[
+              stickyFirstColumn && index == 0 ? 'sticky-first' : '',
+              stickyLastColumn && index == tableColumns.length - 1
+                ? 'sticky-last'
+                : '',
+            ]"
+          >
+            <slot :name="`body-header-${col.name}`" :row="props.row">
+              {{ col.label }}
+            </slot>
+          </q-th>
+        </q-tr>
+      </template>
+      <!--table body-->
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td
+            :key="col.name"
+            :props="props"
+            v-for="(col, index) in tableColumns"
+            :class="[
+              stickyFirstColumn && index == 0 ? 'sticky-first' : '',
+              stickyLastColumn && index == tableColumns.length - 1
+                ? 'sticky-last'
+                : '',
+            ]"
+          >
+            <slot :name="`body-cell-${col.name}`" :row="props.row">
+              {{ props.row[col.name] }}
+            </slot>
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
+    <!--editor dialog-->
+    <popup-dialog
+      v-model="dialog"
+      v-if="$slots['editor'] || $scopedSlots['editor']"
+    >
+      <slot name="editor" :item="item"> </slot>
+      <template v-slot:footer>
+        <q-btn label="取消" flat color="primary" @click="dialog = false" />
+        <q-btn
+          label="保存"
+          color="primary"
+          @click="saveItem"
+          v-if="$listeners.save"
+        />
+      </template>
+    </popup-dialog>
+  </div>
 </template>
 
 <script>
@@ -68,6 +95,8 @@ export default {
   mixins: [datatable],
   data() {
     return {
+      dialog: false, //dialog model
+      item: null, //selected item
       isLoading: false,
       filter: null,
       stickyFirstColumn: false,
@@ -81,6 +110,12 @@ export default {
         rowsPerPage: 100,
       },
     };
+  },
+  computed: {
+    // editable in editor
+    editable() {
+      return this.$slots.editor || this.$scopedSlots.editor;
+    },
   },
   mounted() {
     this.pagination.rowsPerPage = this.rowsPerPage;
@@ -114,6 +149,19 @@ export default {
     },
   },
   methods: {
+    // create new item
+    createItem() {
+      this.item = {};
+      this.dialog = true;
+    },
+    //save item
+    saveItem() {
+      this.$emit("save", this.item);
+    },
+    //hide dialog
+    hideDialog() {
+      this.dialog = false;
+    },
     buildData(data) {
       if (data.length > 0) {
         this.buildColumns(data[0]);
@@ -170,6 +218,7 @@ export default {
 
   .table-title
       font-size: 16px
+      line-height: 32px;
 
   tr th
     position: sticky
