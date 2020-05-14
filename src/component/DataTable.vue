@@ -32,6 +32,9 @@
       <!--table header-->
       <template v-slot:header="props">
         <q-tr :props="props">
+          <q-th v-if="selection || editable">
+            <q-checkbox v-model="selectAll" :disable="tableData.length < 1" />
+          </q-th>
           <q-th
             :key="col.name"
             :props="props"
@@ -52,6 +55,9 @@
       <!--table body-->
       <template v-slot:body="props">
         <q-tr :props="props">
+          <q-td v-if="selection || editable">
+            <q-checkbox v-model="selectedItems" :val="props.row[rowKey]" />
+          </q-td>
           <q-td
             :key="col.name"
             :props="props"
@@ -109,6 +115,7 @@ export default {
         page: 1,
         rowsPerPage: 100,
       },
+      selectedItems: [],
     };
   },
   computed: {
@@ -116,12 +123,37 @@ export default {
     editable() {
       return this.$slots.editor || this.$scopedSlots.editor;
     },
+    selectAll: {
+      set(val) {
+        if (val) {
+          //select all
+          let items = [];
+          this.tableData.forEach((item) => {
+            items.push(item[this.rowKey]);
+          });
+          this.selectedItems = items;
+        } else {
+          //unselect all
+          this.selectedItems = [];
+        }
+      },
+      get() {
+        if (this.selectedItems.length >= this.tableData.length) {
+          return true;
+        } else if (this.selectedItems.length < 1) {
+          return false;
+        } else {
+          return null;
+        }
+      },
+    },
   },
   mounted() {
     this.pagination.rowsPerPage = this.rowsPerPage;
     this.stickyFirstColumn = this.stickyFirst;
     this.stickyLastColumn = this.stickyLast;
     this.isLoading = this.loading;
+    this.selectedItems = this.selected;
     if (this.columns) {
       this.tableColumns = this.columns;
     }
@@ -146,6 +178,9 @@ export default {
     },
     loading(val) {
       this.isLoading = val;
+    },
+    selectedItems(val) {
+      this.$emit("change", this.selectedItems);
     },
   },
   methods: {

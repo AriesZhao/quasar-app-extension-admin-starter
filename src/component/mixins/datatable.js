@@ -1,16 +1,30 @@
 export default {
+  model: {
+    prop: "selected",
+    event: "change",
+  },
   props: {
     request: {
       type: Function,
     },
-    remove: {
-      type: Function,
+    rowKey: {
+      type: String,
+      default: "id",
     },
     title: {
       type: String,
     },
     data: {
       type: Array,
+    },
+    selected: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    selection: {
+      type: String,
     },
     columns: {
       type: Array,
