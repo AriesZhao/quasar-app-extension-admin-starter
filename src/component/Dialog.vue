@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showDlg" @input="onChange">
+  <q-dialog v-model="showDlg" @input="onChange" :persistent="persistent">
     <q-card style="min-height: 200px; min-width: 300px;">
       <q-toolbar>
         <q-toolbar-title>
@@ -27,6 +27,10 @@ export default {
       type: Boolean,
       required: true,
       default: false,
+    },
+    persistent: {
+      type: Boolean,
+      default: true,
     },
     title: {
       type: String,

@@ -113,6 +113,7 @@
     </q-table>
     <!--editor dialog-->
     <popup-dialog
+      title="详情"
       v-model="dialog"
       v-if="$slots['editor'] || $scopedSlots['editor']"
     >
@@ -242,6 +243,7 @@ export default {
             this.dialog = false;
           })
           .catch((e) => {
+            console.info(e);
             this.$q.notify({ message: "保存失败", color: "negative" });
           });
       } else {
@@ -250,9 +252,13 @@ export default {
     },
     //edit item
     editItem(key) {
-      this.item = this.tableData.find((row) => {
-        return row[this.rowKey] === key;
-      });
+      let ret = {};
+      this.item = Object.assign(
+        ret,
+        this.tableData.find((row) => {
+          return row[this.rowKey] === key;
+        })
+      );
       if (this.viewFn) {
         this.item = this.viewFn(this.item);
       } else if (this.$listeners.view) {
@@ -260,14 +266,19 @@ export default {
       }
       this.dialog = true;
     },
+    openItem(item) {
+      let ret = {};
+      this.item = Object.assign(ret, item);
+      this.dialog = true;
+    },
     //update table items
     updateList(item, insert) {
       if (insert) {
         this.tableData.push(item);
       } else {
-        for (let i = 0; i < tableData.length; i++) {
+        for (let i = 0; i < this.tableData.length; i++) {
           if (this.tableData[i][this.rowKey] === item[this.rowKey]) {
-            this.tableData[i] = item;
+            Object.assign(this.tableData[i], item);
           }
         }
       }
