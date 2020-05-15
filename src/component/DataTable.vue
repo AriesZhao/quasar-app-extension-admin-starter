@@ -150,6 +150,7 @@ export default {
       this.isLoading = val;
     },
     selectedItems(val) {
+      this.selectedItems = val
       this.$emit("change", this.selectedItems);
     },
   },

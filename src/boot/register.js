@@ -6,6 +6,7 @@ import FormEditor from "../component/FormEditor.vue";
 import ListEditor from "../component/ListEditor.vue";
 import TreeEditor from "../component/TreeEditor.vue";
 import DataTable from "../component/DataTable.vue";
+import InputCron from "../component/InputCron.vue";
 import * as appHelper from '../utils/helper'
 
 Vue.prototype.$appHelper = appHelper
