@@ -13,9 +13,40 @@
       <template v-slot:top-left>
         <div class="row">
           <div v-if="title" class="table-title">{{ title }}</div>
+          <q-btn
+            v-if="requestFn"
+            icon="refresh"
+            dense
+            flat
+            color="positive"
+            @click="createItem"
+          />
           <div v-if="editable">
-            <q-btn icon="add" dense flat color="primary" @click="createItem" />
-            <q-btn icon="remove" dense flat color="negative" />
+            <q-btn
+              v-if="editable && creatable"
+              icon="add_circle"
+              dense
+              flat
+              color="primary"
+              @click="createItem"
+            />
+            <q-btn
+              :disable="selectedItems.length === 1"
+              icon="edit"
+              dense
+              flat
+              color="secondary"
+              @click="editItem"
+            />
+            <q-btn
+              v-if="editable && removable"
+              :disable="selectedItems.length > 0"
+              icon="delete"
+              dense
+              flat
+              color="negative"
+              @click="removeItem"
+            />
           </div>
         </div>
       </template>
@@ -33,7 +64,11 @@
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th v-if="selection || editable">
-            <q-checkbox v-model="selectAll" :disable="tableData.length < 1" />
+            <q-checkbox
+              v-model="selectAll"
+              v-if="tableData.length > 0"
+              :disable="tableData.length < 1"
+            />
           </q-th>
           <q-th
             :key="col.name"
@@ -88,7 +123,7 @@
           label="保存"
           color="primary"
           @click="saveItem"
-          v-if="$listeners.save"
+          v-if="saveFn || $listeners.save"
         />
       </template>
     </popup-dialog>
@@ -159,9 +194,9 @@ export default {
     }
     if (this.data) {
       this.buildData(this.data);
-    } else if (this.request) {
+    } else if (this.requestFn) {
       this.isLoading = true;
-      this.request()
+      this.requestFn()
         .then((ret) => {
           this.buildData(ret);
           this.isLoading = false;
@@ -175,24 +210,87 @@ export default {
   watch: {
     data(val) {
       this.buildData(val);
+      this.selectedItems = [];
     },
     loading(val) {
       this.isLoading = val;
     },
     selectedItems(val) {
-      this.selectedItems = val
+      this.selectedItems = val;
       this.$emit("change", this.selectedItems);
     },
   },
   methods: {
     // create new item
-    createItem() {
-      this.item = {};
+    async createItem() {
+      if (this.createFn) {
+        this.item = await this.createFn();
+      } else if (this.$listeners.create) {
+        this.$emit("create");
+      } else {
+        this.item = {};
+      }
       this.dialog = true;
     },
     //save item
     saveItem() {
-      this.$emit("save", this.item);
+      if (this.saveFn) {
+        const insert = this.$appHelper.isEmpty(this.item.id);
+        this.saveFn(this.item)
+          .then((ret) => {
+            this.item = ret;
+            this.$q.notify("保存成功");
+            this.updateList(this.item, insert);
+            this.dialog = false;
+          })
+          .catch((e) => {
+            this.$q.notify({ message: "保存失败", color: "negative" });
+          });
+      } else {
+        this.$emit("save", this.item);
+      }
+    },
+    //edit item
+    editItem(item) {
+      if (item) {
+        this.item = item;
+      } else if (!item && this.selectedItems.length > 0) {
+        this.item = this.selectedItems[0];
+      } else {
+        console.error("nothing is selected for edit");
+        return;
+      }
+      if (this.viewFn) {
+        this.item = this.viewFn(this.item);
+      } else if (this.$listeners.view) {
+        this.$emit("view", this.item);
+      }
+      this.dialog = true;
+    },
+    //update table items
+    updateList(item, insert) {
+      if (insert) {
+        this.tableData.push(item);
+      } else {
+        for (let i = 0; i < tableData.length; i++) {
+          if (this.tableData[i][this.rowKey] === item[this.rowKey]) {
+            this.tableData[i] = item;
+          }
+        }
+      }
+    },
+    //remove item
+    removeItem() {
+      this.$q
+        .dialog({
+          title: "确认",
+          message: "确定要删除当前所选记录吗？",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          this.$emit("remove", this.selectedItems);
+        });
     },
     //hide dialog
     hideDialog() {

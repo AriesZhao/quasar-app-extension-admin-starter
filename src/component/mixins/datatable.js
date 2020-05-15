@@ -4,7 +4,24 @@ export default {
     event: "change",
   },
   props: {
-    request: {
+    requestFn: {
+      type: Function,
+    },
+    creatable: {
+      type: Boolean,
+      default: true,
+    },
+    removable: {
+      type: Boolean,
+      default: true,
+    },
+    createFn: {
+      type: Function,
+    },
+    saveFn: {
+      type: Function,
+    },
+    removeFun: {
       type: Function,
     },
     rowKey: {
