@@ -11,7 +11,7 @@
     >
       <!--top left-->
       <template v-slot:top-left>
-        <div class="row">
+        <div class="row q-col-gutter-sm">
           <div v-if="title" class="table-title">{{ title }}</div>
           <q-btn
             v-if="requestFn"
@@ -36,7 +36,7 @@
               dense
               flat
               color="secondary"
-              @click="editItem"
+              @click="editItem(selectedItems[0])"
             />
             <q-btn
               v-if="editable && removable"
@@ -249,15 +249,10 @@ export default {
       }
     },
     //edit item
-    editItem(item) {
-      if (item) {
-        this.item = item;
-      } else if (!item && this.selectedItems.length > 0) {
-        this.item = this.selectedItems[0];
-      } else {
-        console.error("nothing is selected for edit");
-        return;
-      }
+    editItem(key) {
+      this.item = this.tableData.find((row) => {
+        return row[this.rowKey] === key;
+      });
       if (this.viewFn) {
         this.item = this.viewFn(this.item);
       } else if (this.$listeners.view) {
