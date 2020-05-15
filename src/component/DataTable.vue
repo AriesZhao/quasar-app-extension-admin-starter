@@ -31,7 +31,7 @@
               @click="createItem"
             />
             <q-btn
-              :disable="selectedItems.length === 1"
+              :disable="selectedItems.length !== 1"
               icon="edit"
               dense
               flat
@@ -40,7 +40,7 @@
             />
             <q-btn
               v-if="editable && removable"
-              :disable="selectedItems.length > 0"
+              :disable="selectedItems.length < 1"
               icon="delete"
               dense
               flat
@@ -63,7 +63,7 @@
       <!--table header-->
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-if="selection || editable">
+          <q-th v-if="selection || editable" class="selection">
             <q-checkbox
               v-model="selectAll"
               v-if="tableData.length > 0"
@@ -90,7 +90,7 @@
       <!--table body-->
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td v-if="selection || editable">
+          <q-td v-if="selection || editable" class="selection">
             <q-checkbox v-model="selectedItems" :val="props.row[rowKey]" />
           </q-td>
           <q-td
@@ -189,10 +189,8 @@ export default {
     this.stickyLastColumn = this.stickyLast;
     this.isLoading = this.loading;
     this.selectedItems = this.selected;
-    if (this.columns) {
-      this.tableColumns = this.columns;
-    }
     if (this.data) {
+      this.buildColumns(this.data);
       this.buildData(this.data);
     } else if (this.requestFn) {
       this.isLoading = true;
@@ -297,17 +295,23 @@ export default {
       this.dialog = false;
     },
     buildData(data) {
-      if (data.length > 0) {
-        this.buildColumns(data[0]);
-      }
       this.tableData = data;
     },
-    buildColumns(row) {
+    buildColumns(data) {
+      let hasActionColumn = false;
       if (this.columns) {
+        this.columns.forEach((item) => {
+          if (!item.align) {
+            item.align = "center";
+          }
+          if (item.name === this.actionColumn) {
+            hasActionColumn = true;
+          }
+        });
         this.tableColumns = this.columns;
-      } else {
+      } else if (data.length > 0) {
         const columns = [];
-        for (const key in row) {
+        for (const key in data[0]) {
           if (
             !this.excludes ||
             !this.excludes.find((item) => {
@@ -326,9 +330,7 @@ export default {
         this.tableColumns = columns;
       }
       if (
-        !this.tableColumns.find((item) => {
-          return item.name === this.actionColumn;
-        }) &&
+        !hasActionColumn &&
         (this.$scopedSlots[`body-cell-${this.actionColumn}`] ||
           this.$slots[`body-cell-${this.actionColumn}`])
       ) {
@@ -385,4 +387,6 @@ export default {
     background: #fafafa
     position: sticky
     right: 0
+  .selection
+    width: 40px
 </style>
