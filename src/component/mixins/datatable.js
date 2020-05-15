@@ -11,10 +11,6 @@ export default {
       type: String,
       default: "id",
     },
-    method: {
-      type: String,
-      default: "GET",
-    },
     title: {
       type: String,
     },
@@ -23,7 +19,9 @@ export default {
     },
     selected: {
       type: Array,
-      default: [],
+      default() {
+        return [];
+      },
     },
     selection: {
       type: String,
@@ -46,6 +44,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    // sticky last column
     stickyLast: {
       type: Boolean,
       default: false,
