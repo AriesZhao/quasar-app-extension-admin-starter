@@ -11,10 +11,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    removable: {
-      type: Boolean,
-      default: true,
-    },
     createFn: {
       type: Function,
     },
@@ -71,6 +67,10 @@ export default {
       default() {
         return [50, 100, 200, 500];
       },
+    },
+    actionTitle: {
+      type: String,
+      default: "操作",
     },
   },
 };

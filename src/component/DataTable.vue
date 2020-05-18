@@ -85,6 +85,13 @@
               {{ col.label }}
             </slot>
           </q-th>
+          <!--default action column header for editable table-->
+          <q-th
+            v-if="editable && !hasActionColumn && !hasActionSlot"
+            class="action"
+          >
+            {{ actionTitle }}
+          </q-th>
         </q-tr>
       </template>
       <!--table body-->
@@ -107,6 +114,19 @@
             <slot :name="`body-cell-${col.name}`" :row="props.row">
               {{ props.row[col.name] }}
             </slot>
+          </q-td>
+          <!--default action column for editable table-->
+          <q-td
+            v-if="editable && !hasActionColumn && !hasActionSlot"
+            class="action"
+          >
+            <q-btn
+              icon="edit"
+              dense
+              flat
+              color="secondary"
+              @click="editItem(props.row[rowKey])"
+            />
           </q-td>
         </q-tr>
       </template>
@@ -159,6 +179,23 @@ export default {
     editable() {
       return this.$slots.editor || this.$scopedSlots.editor;
     },
+    removable() {
+      return this.removeFn || this.$listeners.remove;
+    },
+    hasActionColumn() {
+      return (
+        this.columns &&
+        this.columns.find((item) => {
+          return item.name === this.actionColumn;
+        })
+      );
+    },
+    hasActionSlot() {
+      return (
+        this.$scopedSlots[`body-cell-${this.actionColumn}`] ||
+        this.$slots[`body-cell-${this.actionColumn}`]
+      );
+    },
     selectAll: {
       set(val) {
         if (val) {
@@ -197,6 +234,7 @@ export default {
       this.isLoading = true;
       this.requestFn()
         .then((ret) => {
+          this.buildColumns(this.data);
           this.buildData(ret);
           this.isLoading = false;
         })
@@ -208,6 +246,7 @@ export default {
   },
   watch: {
     data(val) {
+      this.buildColumns(val);
       this.buildData(val);
       this.selectedItems = [];
     },
@@ -304,14 +343,10 @@ export default {
       this.tableData = data;
     },
     buildColumns(data) {
-      let hasActionColumn = false;
       if (this.columns) {
         this.columns.forEach((item) => {
           if (!item.align) {
             item.align = "center";
-          }
-          if (item.name === this.actionColumn) {
-            hasActionColumn = true;
           }
         });
         this.tableColumns = this.columns;
@@ -335,14 +370,10 @@ export default {
         }
         this.tableColumns = columns;
       }
-      if (
-        !hasActionColumn &&
-        (this.$scopedSlots[`body-cell-${this.actionColumn}`] ||
-          this.$slots[`body-cell-${this.actionColumn}`])
-      ) {
+      if (!this.hasActionColumn && this.hasActionSlot) {
         this.tableColumns.push({
           name: this.actionColumn,
-          label: "操作",
+          label: this.actionTitle,
           align: "center",
         });
         this.stickyLastColumn = true;
@@ -395,4 +426,6 @@ export default {
     right: 0
   .selection
     width: 40px
+  .action
+    text-align: center
 </style>
