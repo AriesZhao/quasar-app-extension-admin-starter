@@ -346,7 +346,13 @@ export default {
       if (this.columns) {
         this.columns.forEach((item) => {
           if (!item.align) {
-            item.align = "center";
+            item.align = this.align;
+          }
+          if (!item.field && item.name) {
+            item.field = item.name;
+          }
+          if (!item.name && item.field) {
+            item.name = item.field;
           }
         });
         this.tableColumns = this.columns;
@@ -363,7 +369,7 @@ export default {
               name: key,
               field: key,
               label: key,
-              align: "center",
+              align: this.align,
               sortable: true,
             });
           }
@@ -374,7 +380,7 @@ export default {
         this.tableColumns.push({
           name: this.actionColumn,
           label: this.actionTitle,
-          align: "center",
+          align: this.align,
         });
         this.stickyLastColumn = true;
       }

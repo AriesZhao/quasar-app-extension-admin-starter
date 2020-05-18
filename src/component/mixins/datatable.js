@@ -72,5 +72,9 @@ export default {
       type: String,
       default: "操作",
     },
+    align: {
+      type: String,
+      default: "center",
+    },
   },
 };
