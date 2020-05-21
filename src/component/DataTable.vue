@@ -11,7 +11,7 @@
     >
       <!--top left-->
       <template v-slot:top-left>
-        <div class="row q-col-gutter-sm">
+        <div class="row">
           <div v-if="title" class="table-title">{{ title }}</div>
           <q-btn
             v-if="requestFn"
