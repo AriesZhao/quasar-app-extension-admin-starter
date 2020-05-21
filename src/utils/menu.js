@@ -5,8 +5,6 @@ export function buildMenus(routes) {
   routes.forEach((item) => {
     if (item.meta && item.meta.menu === false) {
       //skip
-    } else if (item.meta && item.meta.tab === false) {
-      //skip
     } else if (item instanceof Array) {
       item.forEach((subItem) => {
         menu.push(routerToMenu(subItem, ""));

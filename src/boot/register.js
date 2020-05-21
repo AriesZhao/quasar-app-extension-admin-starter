@@ -8,6 +8,7 @@ import TreeEditor from "../component/TreeEditor.vue";
 import DataTable from "../component/DataTable.vue";
 import Dialog from "../component/Dialog.vue";
 import InputCron from "../component/InputCron.vue";
+import InputRegion from "../component/InputRegion.vue";
 import * as appHelper from "../utils/helper";
 
 Vue.prototype.$appHelper = appHelper;
@@ -22,3 +23,4 @@ Vue.component("tree-editor", TreeEditor);
 Vue.component("data-table", DataTable);
 Vue.component("popup-dialog", Dialog);
 Vue.component("input-cron", InputCron);
+Vue.component("input-region", InputRegion);

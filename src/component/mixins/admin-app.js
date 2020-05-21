@@ -32,14 +32,7 @@ export default {
     },
     menus: {
       type: Array,
-    },
-    homePath: {
-      type: String,
-    },
-    homeIcon: {
-      type: String,
-      default: "home",
-    },
+    }
   },
   watch: {
     appInfo(val) {
