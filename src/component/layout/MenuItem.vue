@@ -25,6 +25,7 @@
         :to="prop(data, 'url')"
         clickable
         v-ripple
+        exact
       >
         <q-item-section avatar>
           <q-icon :name="prop(data, 'icon', 'la la-angle-right')" />

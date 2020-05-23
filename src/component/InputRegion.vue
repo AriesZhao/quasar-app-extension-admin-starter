@@ -2,6 +2,7 @@
   <div class="row q-col-gutter-sm" style="width:500px">
     <div class="col-4">
       <q-select
+        label="省/直辖市"
         :options="provinces"
         option-label="name"
         option-value="id"
@@ -13,6 +14,7 @@
     </div>
     <div class="col-4">
       <q-select
+        label="市/县"
         :options="cities"
         option-label="name"
         option-value="id"
@@ -24,6 +26,7 @@
     </div>
     <div class="col-4">
       <q-select
+        label="地区"
         :options="areas"
         option-label="name"
         option-value="id"
