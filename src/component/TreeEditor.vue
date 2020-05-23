@@ -47,7 +47,7 @@
 
     <template slot="left">
       <div class="q-pa-sm">
-        <q-tree :nodes="nodes" :node-key="nodeKey" default-expand-all>
+        <q-tree :nodes="nodes" :node-key="nodeKey" default-expand-all v-if="nodes.length>0">
           <template v-slot:default-header="props">
             <div
               @click.stop="choose(props.node)"
@@ -79,7 +79,9 @@ export default {
   props: {
     nodes: {
       type: Array,
-      default: [],
+      default() {
+        return [];
+      },
     },
     nodeKey: {
       type: String,
