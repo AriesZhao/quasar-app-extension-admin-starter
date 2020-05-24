@@ -9,6 +9,7 @@ import DataTable from "../component/DataTable.vue";
 import Dialog from "../component/Dialog.vue";
 import InputCron from "../component/InputCron.vue";
 import InputRegion from "../component/InputRegion.vue";
+import Selection from "../component/Selection.vue";
 import * as appHelper from "../utils/helper";
 
 Vue.prototype.$appHelper = appHelper;
@@ -24,3 +25,4 @@ Vue.component("data-table", DataTable);
 Vue.component("popup-dialog", Dialog);
 Vue.component("input-cron", InputCron);
 Vue.component("input-region", InputRegion);
+Vue.component("selection", Selection);

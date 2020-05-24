@@ -4,7 +4,7 @@
       <q-expansion-item
         expand-separator
         :header-class="prop(data, 'class', '')"
-        :icon="prop(data, 'icon', 'la la-list')"
+        :icon="prop(data, 'icon', 'menu')"
         :label="prop(data, 'title')"
         :style="{ 'padding-left': level * 10 + 'px' }"
       >
@@ -28,7 +28,7 @@
         exact
       >
         <q-item-section avatar>
-          <q-icon :name="prop(data, 'icon', 'la la-angle-right')" />
+          <q-icon :name="prop(data, 'icon', 'chevron_right')" />
         </q-item-section>
         <q-item-section>{{ prop(data, "title") }}</q-item-section>
       </q-item>
@@ -69,7 +69,8 @@ export default {
 .menu-list .q-item__section--avatar
   min-width: 30px
 .menu-list .q-item__section--side
-  padding-right: 5px
+  padding-left: 10px
+  padding-right:  20px
 .menu-list .q-item__section--main,.menu-list .q-item__label
   font-size: 14px
 </style>
