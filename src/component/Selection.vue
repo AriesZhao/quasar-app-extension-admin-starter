@@ -11,8 +11,9 @@
     :use-chips="multiple"
     :label="label"
     @filter="filterFn"
-    emit-value
-    map-options
+    @input="inputFn"
+    :emit-value="emitValue"
+    :map-options="mapOptions"
   ></q-select>
 </template>
 <script>
@@ -25,17 +26,23 @@ export default {
   props: {
     value: {},
     label: String,
+    emitValue: {
+      type: Boolean,
+      default: false,
+    },
+    mapOptions: {
+      type: Boolean,
+      default: false,
+    },
     multiple: {
       type: Boolean,
       default: false,
     },
     optionLabel: {
       type: String,
-      default: "label",
     },
     optionValue: {
       type: String,
-      default: "value",
     },
     requestFn: {
       type: Function,
@@ -66,6 +73,10 @@ export default {
       } else {
         abort();
       }
+    },
+    inputFn(val) {
+      this.selection = val;
+      this.$emit("change", this.selection);
     },
   },
 };
