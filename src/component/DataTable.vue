@@ -273,7 +273,7 @@ export default {
     //save item
     saveItem() {
       if (this.saveFn) {
-        const insert = this.$appHelper.isEmpty(this.item.id);
+        const insert = this.$appHelper.isEmpty(this.item[this.rowKey]);
         this.saveFn(this.item)
           .then((ret) => {
             this.item = ret;
@@ -332,7 +332,11 @@ export default {
           persistent: true,
         })
         .onOk(() => {
-          this.$emit("remove", this.selectedItems);
+          if (this.removeFn) {
+            this.removeFn(this.selectedItems);
+          } else if (this.$listeners.remove) {
+            this.$emit("remove", this.selectedItems);
+          }
         });
     },
     //hide dialog

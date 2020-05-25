@@ -17,7 +17,7 @@ export default {
     saveFn: {
       type: Function,
     },
-    removeFun: {
+    removeFn: {
       type: Function,
     },
     rowKey: {
