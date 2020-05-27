@@ -176,10 +176,6 @@ export default {
     };
   },
   computed: {
-    // editable in editor
-    removable() {
-      return this.removeFn || this.$listeners.remove;
-    },
     hasActionColumn() {
       return (
         this.columns &&

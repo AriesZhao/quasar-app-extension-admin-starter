@@ -85,11 +85,18 @@ export default {
   watch: {
     list(val) {
       this.itemList = val;
+      if (!this.item && this.itemList && this.itemList.length > 0) {
+        this.choose(this.list[0]);
+      }
     },
   },
   mounted() {
     this.itemList = this.list;
-    this.item = this.entity;
+    if (!this.$appHelper.isEmpty(this.entity)) {
+      this.choose(this.entity);
+    } else if (!this.item && this.itemList && this.itemList.length > 0) {
+      this.choose(this.list[0]);
+    }
   },
   methods: {
     choose(item) {
