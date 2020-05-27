@@ -23,7 +23,7 @@
           />
           <div v-if="editable">
             <q-btn
-              v-if="editable && creatable"
+              v-if="creatable"
               icon="add_circle"
               dense
               flat
@@ -31,6 +31,7 @@
               @click="createItem"
             />
             <q-btn
+              v-if="editable"
               :disable="selectedItems.length !== 1"
               icon="edit"
               dense
@@ -39,7 +40,7 @@
               @click="editItem(selectedItems[0])"
             />
             <q-btn
-              v-if="editable && removable"
+              v-if="removable"
               :disable="selectedItems.length < 1"
               icon="delete"
               dense
@@ -144,7 +145,7 @@
           label="保存"
           color="primary"
           @click="saveItem"
-          v-if="saveFn || $listeners.save"
+          v-if="editable && (saveFn || $listeners.save)"
         />
       </template>
     </popup-dialog>
@@ -176,9 +177,6 @@ export default {
   },
   computed: {
     // editable in editor
-    editable() {
-      return this.$slots.editor || this.$scopedSlots.editor;
-    },
     removable() {
       return this.removeFn || this.$listeners.remove;
     },

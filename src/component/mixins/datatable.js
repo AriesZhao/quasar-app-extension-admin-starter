@@ -11,6 +11,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    editable: {
+      type: Boolean,
+      default: true,
+    },
+    removable: {
+      type: Boolean,
+      default: true,
+    },
     createFn: {
       type: Function,
     },

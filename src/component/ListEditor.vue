@@ -49,6 +49,10 @@
       </q-list>
     </template>
 
+    <template slot="left-actions">
+      <slot name="left-actions" />
+    </template>
+
     <template slot="right">
       <slot name="item" :status="status" :readonly="readonly" />
     </template>
