@@ -1,5 +1,5 @@
 <template>
-  <div class="row q-col-gutter-sm" style="width:500px">
+  <div class="row q-col-gutter-sm" style="width: 500px;">
     <div class="col-4">
       <q-select
         label="省/直辖市"
@@ -10,6 +10,7 @@
         emit-value
         map-options
         @input="onInput"
+        :readonly="readonly"
       />
     </div>
     <div class="col-4">
@@ -22,6 +23,7 @@
         emit-value
         map-options
         @input="onInput"
+        :readonly="readonly"
       />
     </div>
     <div class="col-4">
@@ -34,45 +36,44 @@
         emit-value
         map-options
         @input="onInput"
+        :readonly="readonly"
       />
     </div>
   </div>
 </template>
 <script>
-import region from '../utils/region'
+import input from "./mixins/input";
+import region from "../utils/region";
 export default {
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
-  props: ['value'],
-  data () {
+  name:'InputRegion',
+  mixins:[input],
+  data() {
     return {
       regionId: null,
       proviceId: null,
       cityId: null,
-      areaId: null
-    }
+      areaId: null,
+    };
   },
-  mounted () {
-    this.regionId = this.value
+  mounted() {
+    this.regionId = this.value;
   },
   computed: {
-    provinces () {
-      return region.provinceOptions
+    provinces() {
+      return region.provinceOptions;
     },
-    cities () {
-      return region.getCity(this.proviceId)
+    cities() {
+      return region.getCity(this.proviceId);
     },
-    areas () {
-      return region.getArea(this.cityId)
-    }
+    areas() {
+      return region.getArea(this.cityId);
+    },
   },
   methods: {
-    onInput (val) {
-      this.regionId = val
-      this.$emit('change', val)
-    }
-  }
-}
+    onInput(val) {
+      this.regionId = val;
+      this.$emit("change", val);
+    },
+  },
+};
 </script>
