@@ -1,12 +1,12 @@
 <template>
-  <div class="row q-col-gutter-sm" style="width: 500px;">
+  <div class="row q-col-gutter-sm">
     <div class="col-4">
       <q-select
         label="省/直辖市"
-        :options="provinces"
+        :options="provinceIds"
         option-label="name"
         option-value="id"
-        v-model="proviceId"
+        v-model="model.provinceId"
         emit-value
         map-options
         @input="onInput"
@@ -19,7 +19,7 @@
         :options="cities"
         option-label="name"
         option-value="id"
-        v-model="cityId"
+        v-model="model.cityId"
         emit-value
         map-options
         @input="onInput"
@@ -32,7 +32,7 @@
         :options="areas"
         option-label="name"
         option-value="id"
-        v-model="areaId"
+        v-model="model.townId"
         emit-value
         map-options
         @input="onInput"
@@ -45,28 +45,35 @@
 import input from "./mixins/input";
 import region from "../utils/region";
 export default {
-  name:'InputRegion',
-  mixins:[input],
+  name: "InputRegion",
+  mixins: [input],
   data() {
     return {
-      regionId: null,
-      proviceId: null,
-      cityId: null,
-      areaId: null,
+      model: {
+        provinceId: null,
+        cityId: null,
+        townId: null,
+        address: null,
+      },
     };
   },
   mounted() {
-    this.regionId = this.value;
+    if (this.value) {
+      this.model.provinceId = this.value.provinceId;
+      this.model.cityId = this.value.cityId;
+      this.model.townId = this.value.townId;
+      this.model.address = this.value.address;
+    }
   },
   computed: {
-    provinces() {
+    provinceIds() {
       return region.provinceOptions;
     },
     cities() {
-      return region.getCity(this.proviceId);
+      return region.getCity(this.model.provinceId);
     },
     areas() {
-      return region.getArea(this.cityId);
+      return region.getArea(this.model.cityId);
     },
   },
   methods: {
