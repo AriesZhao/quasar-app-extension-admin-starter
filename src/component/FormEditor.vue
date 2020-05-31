@@ -9,6 +9,7 @@
           @click="create"
         />
         <q-btn
+          :loading="saving"
           label="保存"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
@@ -47,6 +48,9 @@ export default {
   props: {
     actoin: {
       type: String,
+    },
+    saveFn: {
+      type: Function,
     },
   },
   methods: {

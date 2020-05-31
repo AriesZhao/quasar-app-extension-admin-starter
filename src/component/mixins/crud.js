@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       status: "blank",
+      saving: false,
     };
   },
   computed: {
@@ -54,8 +55,20 @@ export default {
       this.$emit("edit");
     },
     save() {
-      this.status = "view";
-      this.$parent.save && this.$parent.save();
+      if (this.saveFn) {
+        this.saving = true;
+        this.saveFn()
+          .then((ret) => {
+            this.saving = false;
+            this.status = "view";
+            this.$emit("change", ret);
+            this.$q.notify("保存成功");
+          })
+          .catch((err) => {
+            this.saving = false;
+            this.$q.notify({ message: err, color: "negative" });
+          });
+      }
       this.$emit("save");
     },
     remove() {
