@@ -274,17 +274,15 @@ export default {
     //save item
     saveItem() {
       if (this.saveFn) {
-        const insert = this.$appHelper.isEmpty(this.item[this.rowKey]);
         this.saveFn(this.item)
           .then((ret) => {
             this.item = ret;
             this.$q.notify("保存成功");
-            this.updateList(this.item, insert);
+            this.updateList(this.item);
             this.dialog = false;
           })
-          .catch((e) => {
-            console.info(e);
-            this.$q.notify({ message: "保存失败", color: "negative" });
+          .catch((err) => {
+            this.$q.notify({ message: err, color: "negative" });
           });
       } else {
         this.$emit("save", this.item);
@@ -312,16 +310,14 @@ export default {
       this.dialog = true;
     },
     //update table items
-    updateList(item, insert) {
-      if (insert) {
-        this.tableData.push(item);
-      } else {
-        for (let i = 0; i < this.tableData.length; i++) {
-          if (this.tableData[i][this.rowKey] === item[this.rowKey]) {
-            Object.assign(this.tableData[i], item);
-          }
+    updateList(item) {
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (this.tableData[i][this.rowKey] === item[this.rowKey]) {
+          Object.assign(this.tableData[i], item);
+          return;
         }
       }
+      this.tableData.push(item);
     },
     //remove item
     removeItem() {
@@ -334,7 +330,21 @@ export default {
         })
         .onOk(() => {
           if (this.removeFn) {
-            this.removeFn(this.selectedItems);
+            this.removeFn(this.selectedItems)
+              .then((ret) => {
+                this.selectedItems.forEach((item) => {
+                  this.tableData.splice(
+                    this.tableData.find((row) => {
+                      return row[this.rowKey] === item;
+                    }),
+                    1
+                  );
+                });
+                this.$q.notify("删除成功");
+              })
+              .catch((err) => {
+                this.$q.notify({ message: err, color: "negative" });
+              });
           } else if (this.$listeners.remove) {
             this.$emit("remove", this.selectedItems);
           }
