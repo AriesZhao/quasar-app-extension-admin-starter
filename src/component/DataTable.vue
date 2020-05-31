@@ -23,7 +23,7 @@
           />
           <div v-if="editable">
             <q-btn
-              v-if="creatable"
+              v-if="creatable && hasEditorSlot"
               icon="add_circle"
               dense
               flat
@@ -31,7 +31,7 @@
               @click="createItem"
             />
             <q-btn
-              v-if="editable"
+              v-if="editable && hasEditorSlot"
               :disable="selectedItems.length !== 1"
               icon="edit"
               dense
@@ -40,7 +40,7 @@
               @click="editItem(selectedItems[0])"
             />
             <q-btn
-              v-if="removable"
+              v-if="removable && hasEditorSlot"
               :disable="selectedItems.length < 1"
               icon="delete"
               dense
@@ -64,7 +64,7 @@
       <!--table header-->
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-if="selection || editable" class="selection">
+          <q-th v-if="selection || hasEditorSlot" class="selection">
             <q-checkbox
               v-model="selectAll"
               v-if="tableData.length > 0"
@@ -88,7 +88,9 @@
           </q-th>
           <!--default action column header for editable table-->
           <q-th
-            v-if="editable && !hasActionColumn && !hasActionSlot"
+            v-if="
+              editable && hasEditorSlot && !hasActionColumn && !hasActionSlot
+            "
             class="action"
           >
             {{ actionTitle }}
@@ -98,7 +100,7 @@
       <!--table body-->
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td v-if="selection || editable" class="selection">
+          <q-td v-if="selection || hasEditorSlot" class="selection">
             <q-checkbox v-model="selectedItems" :val="props.row[rowKey]" />
           </q-td>
           <q-td
@@ -118,7 +120,9 @@
           </q-td>
           <!--default action column for editable table-->
           <q-td
-            v-if="editable && !hasActionColumn && !hasActionSlot"
+            v-if="
+              hasEditorSlot && editable && !hasActionColumn && !hasActionSlot
+            "
             class="action"
           >
             <q-btn
@@ -176,6 +180,9 @@ export default {
     };
   },
   computed: {
+    hasEditorSlot() {
+      return this.$scopedSlots.editor || this.$slots.editor;
+    },
     hasActionColumn() {
       return (
         this.columns &&

@@ -9,7 +9,7 @@
         v-model="model.provinceId"
         emit-value
         map-options
-        @input="onInput"
+        @input="onProvinceInput"
         :readonly="readonly"
       />
     </div>
@@ -22,7 +22,7 @@
         v-model="model.cityId"
         emit-value
         map-options
-        @input="onInput"
+        @input="onCityInput"
         :readonly="readonly"
       />
     </div>
@@ -35,7 +35,7 @@
         v-model="model.townId"
         emit-value
         map-options
-        @input="onInput"
+        @input="onTownInput"
         :readonly="readonly"
       />
     </div>
@@ -52,8 +52,7 @@ export default {
       model: {
         provinceId: null,
         cityId: null,
-        townId: null,
-        address: null,
+        townId: null
       },
     };
   },
@@ -62,7 +61,6 @@ export default {
       this.model.provinceId = this.value.provinceId;
       this.model.cityId = this.value.cityId;
       this.model.townId = this.value.townId;
-      this.model.address = this.value.address;
     }
   },
   computed: {
@@ -77,10 +75,18 @@ export default {
     },
   },
   methods: {
-    onInput(val) {
-      this.regionId = val;
-      this.$emit("change", val);
+    onProvinceInput(val) {
+      this.model.provinceId = val;
+      this.$emit("change", this.model);
     },
+    onCityInput(val) {
+      this.model.cityId = val;
+      this.$emit("change", this.model);
+    },
+    onTownInput(val) {
+      this.model.townId = val;
+      this.$emit("change", this.model);
+    }
   },
 };
 </script>
