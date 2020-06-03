@@ -47,7 +47,12 @@
 
     <template slot="left">
       <div class="q-pa-sm">
-        <q-tree :nodes="nodes" :node-key="nodeKey" default-expand-all v-if="nodes.length>0">
+        <q-tree
+          :nodes="nodes"
+          :node-key="nodeKey"
+          default-expand-all
+          v-if="nodes.length > 0"
+        >
           <template v-slot:default-header="props">
             <div
               @click.stop="choose(props.node)"
@@ -87,6 +92,9 @@ export default {
       type: String,
       default: "id",
     },
+    nodeValue: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -113,7 +121,11 @@ export default {
       if (this.readonly) {
         this.status = "view";
         let ret = {};
-        Object.assign(ret, node);
+        if (this.nodeValue) {
+          Object.assign(ret, node[this.nodeValue]);
+        } else {
+          Object.assign(ret, node);
+        }
         this.lastNode = ret;
         this.node = ret;
         this.$emit("change", this.node);
