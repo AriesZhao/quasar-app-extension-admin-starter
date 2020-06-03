@@ -171,6 +171,15 @@ import datatable from "./mixins/datatable";
 export default {
   mixins: [datatable],
   data() {
+    let pagination = {
+      sortBy: null,
+      descending: false,
+      page: 1,
+      rowsPerPage: 100,
+    };
+    if (this.requestFn) {
+      pagination.rowsNumber = 0;
+    }
     return {
       dialog: false, //dialog model
       item: null, //selected item
@@ -180,12 +189,7 @@ export default {
       stickyLastColumn: false,
       tableData: [],
       tableColumns: [],
-      pagination: {
-        sortBy: null,
-        descending: false,
-        page: 1,
-        rowsPerPage: 100,
-      },
+      pagination: pagination,
       selectedItems: [],
     };
   },
@@ -233,9 +237,6 @@ export default {
     },
   },
   mounted() {
-    if (this.removeFn) {
-      this.pagination.rowsNumber = 0;
-    }
     this.pagination.rowsPerPage = this.rowsPerPage;
     this.stickyFirstColumn = this.stickyFirst;
     this.stickyLastColumn = this.stickyLast;
