@@ -68,9 +68,6 @@ export default {
 <style lang="sass">
 .menu-list .q-item__section--avatar
   min-width: 30px
-.menu-list .q-item__section--side
-  padding-left: 10px
-  padding-right:  20px
 .menu-list .q-item__section--main,.menu-list .q-item__label
   font-size: 14px
 </style>
