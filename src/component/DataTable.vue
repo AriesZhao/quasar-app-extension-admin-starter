@@ -1,14 +1,18 @@
 <template>
   <div class="datatable">
     <q-table
-      :filter="filter"
+      :filterText="filterText"
       :loading="isLoading"
       separator="cell"
       :data="tableData"
       :columns="tableColumns"
       :pagination.sync="pagination"
       :rows-per-page-options="rowsPerPageOptions"
+      @request="onRequest"
     >
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
       <!--top left-->
       <template v-slot:top-left>
         <div class="row">
@@ -19,7 +23,7 @@
             dense
             flat
             color="positive"
-            @click="createItem"
+            @click="refresh"
           />
           <div v-if="editable">
             <q-btn
@@ -53,8 +57,14 @@
       </template>
       <!--top right-->
       <template v-slot:top-right>
-        <div class="row q-gutter-sm">
-          <q-input outlined dense v-model="filter" placeholder="查找">
+        <slot name="top-right" />
+        <div
+          class="row q-gutter-sm"
+          v-if="
+            !requestFn && !($slots['top-right'] || $scopedSlots['top-right'])
+          "
+        >
+          <q-input outlined dense v-model="filterText" placeholder="查找">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -165,7 +175,7 @@ export default {
       dialog: false, //dialog model
       item: null, //selected item
       isLoading: false,
-      filter: null,
+      filterText: null,
       stickyFirstColumn: false,
       stickyLastColumn: false,
       tableData: [],
@@ -223,6 +233,9 @@ export default {
     },
   },
   mounted() {
+    if (this.removeFn) {
+      this.pagination.rowsNumber = 0;
+    }
     this.pagination.rowsPerPage = this.rowsPerPage;
     this.stickyFirstColumn = this.stickyFirst;
     this.stickyLastColumn = this.stickyLast;
@@ -232,17 +245,7 @@ export default {
       this.buildColumns(this.data);
       this.buildData(this.data);
     } else if (this.requestFn) {
-      this.isLoading = true;
-      this.requestFn()
-        .then((ret) => {
-          this.buildColumns(this.data);
-          this.buildData(ret);
-          this.isLoading = false;
-        })
-        .catch((err) => {
-          this.$q.notify({ message: "加载数据错误", color: "negative" });
-          console.info(err);
-        });
+      this.onRequest({ pagination: this.pagination });
     }
   },
   watch: {
@@ -260,6 +263,36 @@ export default {
     },
   },
   methods: {
+    //refresh table
+    refresh() {
+      this.onRequest({ pagination: this.pagination });
+    },
+    // request data from server
+    onRequest(props) {
+      let pageable = {
+        page: props.pagination.page,
+        size: props.pagination.rowsPerPage,
+        sort: props.pagination.sortBy,
+        direction: props.pagination.descending ? "DESC" : "ASC",
+      };
+      this.isLoading = true;
+      this.requestFn(pageable)
+        .then((ret) => {
+          this.tableData = ret.content;
+          this.buildColumns(this.tableData);
+          this.buildData(this.tableData);
+          this.pagination.sortBy = props.pagination.sortBy;
+          this.pagination.descending = props.pagination.descending;
+          this.pagination.page = props.pagination.page;
+          this.pagination.rowsPerPage = props.pagination.rowsPerPage;
+          this.pagination.rowsNumber = ret.totalElements;
+          this.isLoading = false;
+        })
+        .catch((err) => {
+          this.isLoading = false;
+          this.$q.notify({ message: err, color: "negative" });
+        });
+    },
     // create new item
     async createItem() {
       if (this.createFn) {
