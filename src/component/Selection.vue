@@ -28,11 +28,11 @@ export default {
     label: String,
     emitValue: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     mapOptions: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     multiple: {
       type: Boolean,
