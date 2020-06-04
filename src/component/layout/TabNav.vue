@@ -6,7 +6,6 @@
       flat
       round
       dense
-      persistent
       class="hide-arrow"
     >
       <div
