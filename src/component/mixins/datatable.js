@@ -84,5 +84,9 @@ export default {
       type: String,
       default: "center",
     },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
 };

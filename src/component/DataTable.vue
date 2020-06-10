@@ -8,6 +8,7 @@
       :columns="tableColumns"
       :pagination.sync="pagination"
       :rows-per-page-options="rowsPerPageOptions"
+      :dense="dense"
       @request="onRequest"
     >
       <template v-slot:loading>
@@ -271,7 +272,7 @@ export default {
     // request data from server
     onRequest(props) {
       let pageable = {
-        page: props.pagination.page,
+        page: props.pagination.page - 1,
         size: props.pagination.rowsPerPage,
         sort: props.pagination.sortBy,
         direction: props.pagination.descending ? "DESC" : "ASC",
