@@ -68,8 +68,11 @@ export default {
             this.saving = false;
             this.$q.notify({ message: err, color: "negative" });
           });
+      } else if (this.$parent && this.$parent.save) {
+        this.$parent.save();
+      } else if (this.$listeners.save) {
+        this.$emit("save");
       }
-      this.$emit("save");
     },
     remove() {
       this.$q

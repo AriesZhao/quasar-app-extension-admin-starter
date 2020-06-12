@@ -1,6 +1,12 @@
+/**
+ * 判断对象是否为空
+ * @param {*} obj 
+ */
 export function isEmpty(obj) {
   if (!obj || obj === null || JSON.stringify(obj) === "{}") {
     return true;
+  }else{
+    return false
   }
 }
 
