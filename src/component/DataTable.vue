@@ -284,7 +284,7 @@ export default {
           this.buildData(this.tableData);
           this.pagination.sortBy = props.pagination.sortBy;
           this.pagination.descending = props.pagination.descending;
-          this.pagination.page = props.pagination.page;
+          this.pagination.page = props.pagination.page - 1;
           this.pagination.rowsPerPage = props.pagination.rowsPerPage;
           this.pagination.rowsNumber = ret.totalElements;
           this.isLoading = false;

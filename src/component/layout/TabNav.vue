@@ -66,45 +66,25 @@
         </q-chip>
       </div>
     </q-btn-dropdown>
-    <q-btn
-      ref="left-btn"
-      icon="fas fa-angle-double-left"
-      dense
-      flat
-      text-color="white"
-      color="primary"
-      class="bg-primary go-left"
-      @click="goRight"
-      v-if="leftBtn"
-    />
-    <div class="tabs" ref="tabs">
-      <q-chip
-        class="tabnav-item"
-        v-for="tab in tabList"
-        :key="tab.url"
-        clickable
-        ripple
-        removable
-        :color="tab.selected ? 'secondary' : 'blue'"
-        text-color="white"
-        :style="{ left: pos + 'px' }"
-        @click="selectTab(tab.url)"
-        @remove="closeTab(tab)"
-      >
-        <div class="tabtitle">{{ tab.title }}</div>
-      </q-chip>
+    <div class="tabs" ref="tabs" style="width: 100%; padding-right: 30px;">
+      <q-tabs v-model="tab" align="left">
+        <q-route-tab
+          content-class="nav-tab"
+          v-for="tab in tabList"
+          :key="tab.url"
+          :to="tab.url"
+          exact
+          v-bind="tab"
+        >
+          <div class="q-tab__label">{{ tab.title }}</div>
+          <q-icon
+            class="close-tab-btn"
+            name="close"
+            @click.stop.prevent="closeTab(tab)"
+          />
+        </q-route-tab>
+      </q-tabs>
     </div>
-    <q-btn
-      ref="right-btn"
-      icon="fas fa-angle-double-right"
-      flat
-      dense
-      text-color="white"
-      color="primary"
-      class="bg-primary go-right"
-      @click="goLeft"
-      v-if="rightBtn"
-    />
   </div>
 </template>
 
@@ -116,15 +96,8 @@ export default {
   mixins: [base],
   data() {
     return {
-      pos: 0,
-      leftBtn: false,
-      rightBtn: false,
+      tab: null,
     };
-  },
-  watch: {
-    tabList() {
-      this.resize();
-    },
   },
   mounted() {
     this.$root.$on("closeTab", (url) => {
@@ -135,37 +108,6 @@ export default {
     });
   },
   methods: {
-    tabWidth() {
-      return parseFloat(
-        window.getComputedStyle(this.$refs.tabs).width.replace("px", "")
-      );
-    },
-    navWidth() {
-      var width =
-        parseFloat(window.getComputedStyle(this.$el).width.replace("px", "")) -
-        window
-          .getComputedStyle(this.$refs.dashboard.$el)
-          .width.replace("px", "");
-      if (this.$refs["left-btn"]) {
-        width -= parseFloat(
-          window
-            .getComputedStyle(this.$refs["left-btn"].$el)
-            .width.replace("px", "")
-        );
-      } else {
-        width -= 30;
-      }
-      if (this.$refs["right-btn"]) {
-        width -= parseFloat(
-          window
-            .getComputedStyle(this.$refs["right-btn"].$el)
-            .width.replace("px", "")
-        );
-      } else {
-        width -= 30;
-      }
-      return width;
-    },
     selectTab(path) {
       if (path !== this.$route.path) {
         this.$router.push({ path: path });
@@ -174,31 +116,9 @@ export default {
     closeTab(tab) {
       this[constants.CLOSE_TAB](tab);
     },
-    goLeft() {
-      if (this.tabWidth() < this.navWidth()) {
-        this.pos = 0;
-      } else if (this.tabWidth() + this.pos - 200 > this.navWidth()) {
-        this.pos = this.pos - 200;
-      } else {
-        this.pos = this.navWidth() - this.tabWidth();
-      }
-      this.resize();
-    },
-    goRight() {
-      if (this.pos + 200 >= 0) {
-        this.pos = 0;
-      } else {
-        this.pos = this.pos + 200;
-      }
-      this.resize();
-    },
     clearTabs() {
       this[constants.CLEAR_TABS]();
       this.$router.replace({ path: "/" });
-    },
-    resize() {
-      this.rightBtn = this.tabWidth() > this.navWidth();
-      this.leftBtn = this.pos < 0;
     },
     removeFavority(favority) {
       this[constants.REMOVE_FAVORITY](favority);
@@ -207,7 +127,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .tabnav {
   white-space: nowrap;
   overflow: hidden;
@@ -216,25 +136,24 @@ export default {
   height: 50px;
   line-height: 50px;
 }
-
 .tabnav .tabs {
   display: inline-block;
   overflow: hidden;
   position: absolute;
 }
-
-.tabtitle {
-  max-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 3px;
+.tabnav .q-tab {
+  padding: 0 5px;
 }
-
-.go-right {
-  z-index: 5;
-  right: 0px;
-  top: 10px;
+.tabnav .close-tab-btn {
   position: absolute;
+  right: -3px;
+  top: 3px;
+  display: none;
+}
+.tabnav .nav-tab {
+  min-width: 50px !important;
+}
+.tabnav .q-tab__content:hover .close-tab-btn {
+  display: block;
 }
 </style>
