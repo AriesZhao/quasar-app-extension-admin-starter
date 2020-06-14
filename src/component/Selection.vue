@@ -31,11 +31,11 @@ export default {
     },
     emitValue: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     mapOptions: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     multiple: {
       type: Boolean,
