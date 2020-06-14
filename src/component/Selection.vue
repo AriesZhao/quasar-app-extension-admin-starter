@@ -1,31 +1,34 @@
 <template>
-  <q-select
-    ref="select"
-    v-model="selection"
-    use-input
-    input-debounce="300"
-    :options="options"
-    :multiple="multiple"
-    :option-label="optionLabel"
-    :option-value="optionValue"
-    :use-chips="multiple"
-    :label="label"
-    @filter="filterFn"
-    @input="inputFn"
-    :emit-value="emitValue"
-    :map-options="mapOptions"
-  ></q-select>
+  <div>
+    <q-select
+      v-if="!readonly"
+      ref="select"
+      v-model="selection"
+      use-input
+      input-debounce="300"
+      :options="options"
+      :multiple="multiple"
+      :option-label="optionLabel"
+      :option-value="optionValue"
+      :use-chips="multiple"
+      :label="label"
+      @filter="filterFn"
+      @input="inputFn"
+      :emit-value="emitValue"
+      :map-options="mapOptions"
+    />
+    <q-input :label="label" v-model="displayValue" readonly v-if="readonly" />
+  </div>
 </template>
 <script>
+import input from "./mixins/input";
 export default {
   name: "Selection",
-  model: {
-    prop: "value",
-    event: "change",
-  },
+  mixins: [input],
   props: {
-    value: {},
-    label: String,
+    displayValue: {
+      type: String,
+    },
     emitValue: {
       type: Boolean,
       default: true,
