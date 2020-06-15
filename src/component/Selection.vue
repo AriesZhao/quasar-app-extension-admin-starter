@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-select
-      v-if="!readonly"
+      v-if="!readonly && filter"
       ref="select"
       v-model="selection"
       use-input
@@ -17,6 +17,19 @@
       :emit-value="emitValue"
       :map-options="mapOptions"
     />
+    <q-select
+      v-if="!readonly && !filter"
+      ref="select"
+      v-model="selection"
+      :options="options"
+      :multiple="multiple"
+      :option-label="optionLabel"
+      :option-value="optionValue"
+      :use-chips="multiple"
+      :label="label"
+      :emit-value="emitValue"
+      :map-options="mapOptions"
+    />
     <q-input :label="label" v-model="displayValue" readonly v-if="readonly" />
   </div>
 </template>
@@ -26,6 +39,10 @@ export default {
   name: "Selection",
   mixins: [input],
   props: {
+    filter: {
+      type: Boolean,
+      default: false,
+    },
     displayValue: {
       type: String,
     },
@@ -64,6 +81,9 @@ export default {
   },
   mounted() {
     this.selection = this.value;
+    this.requestFn().then((ret) => {
+      this.options = ret;
+    });
   },
   methods: {
     filterFn(val, update, abort) {
