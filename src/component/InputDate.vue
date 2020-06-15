@@ -1,5 +1,7 @@
 <template>
   <q-input
+    class="input-date"
+    :readonly="readonly"
     :outlined="outlined"
     :label="label"
     v-model="dateValue"
@@ -8,7 +10,7 @@
   >
     <template v-slot:append>
       <q-icon name="event" class="cursor-pointer">
-        <q-popup-proxy ref="qDateProxy">
+        <q-popup-proxy ref="qDateProxy" v-if="!readonly">
           <q-date v-model="dateValue" @input="onInput" />
         </q-popup-proxy>
       </q-icon>
@@ -17,34 +19,35 @@
 </template>
 
 <script>
+import input from "./mixins/input";
+
 export default {
-  model: {
-    prop: 'value',
-    event: 'change'
+  name: "InputDate",
+  mixins: [input],
+  mounted() {
+    this.dateValue = this.value;
   },
-  props: {
-    value: String,
-    outlined: {
-      type: Boolean,
-      default () {
-        return false
-      }
-    },
-    label: String
-  },
-  mounted () {
-    this.dateValue = this.value
-  },
-  data () {
+  data() {
     return {
-      dateValue: null
-    }
+      dateValue: null,
+    };
+  },
+  watch: {
+    value(val) {
+      this.dateValue = val;
+    },
   },
   methods: {
-    onInput (e) {
-      this.$refs.qDateProxy.hide()
-      this.$emit('change', this.dateValue)
-    }
-  }
-}
+    onInput(e) {
+      this.$refs.qDateProxy.hide();
+      this.$emit("change", this.dateValue);
+    },
+  },
+};
 </script>
+
+<style>
+.input-date {
+  padding-bottom: 0px;
+}
+</style>
