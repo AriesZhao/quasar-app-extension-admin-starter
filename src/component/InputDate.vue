@@ -5,7 +5,6 @@
     :outlined="outlined"
     :label="label"
     v-model="dateValue"
-    :rules="['date']"
     @input="onInput"
   >
     <template v-slot:append>
