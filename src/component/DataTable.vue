@@ -126,7 +126,7 @@
             ]"
           >
             <slot :name="`body-cell-${col.name}`" :row="props.row">
-              {{ props.row[col.name] }}
+              {{ props.row[col.field] }}
             </slot>
           </q-td>
           <!--default action column for editable table-->

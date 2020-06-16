@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="selection">
     <q-select
       v-if="!readonly && filter"
       ref="select"
@@ -12,10 +12,10 @@
       :option-value="optionValue"
       :use-chips="multiple"
       :label="label"
-      @filter="filterFn"
-      @input="inputFn"
       :emit-value="emitValue"
       :map-options="mapOptions"
+      @filter="filterFn"
+      @input="inputFn"
     />
     <q-select
       v-if="!readonly && !filter"
@@ -29,12 +29,15 @@
       :label="label"
       :emit-value="emitValue"
       :map-options="mapOptions"
+      @input="inputFn"
     />
     <q-input :label="label" v-model="displayValue" readonly v-if="readonly" />
   </div>
 </template>
+
 <script>
 import input from "./mixins/input";
+
 export default {
   name: "Selection",
   mixins: [input],
@@ -104,3 +107,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.selection {
+  min-width: 150px;
+}
+</style>

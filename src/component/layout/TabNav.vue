@@ -104,7 +104,7 @@ export default {
       let tab = this.tabList.find((item) => {
         return item.url === url;
       });
-      this.closeTab(tab);
+      this[constants.CLOSE_TAB](tab);
     });
   },
   methods: {
@@ -115,10 +115,12 @@ export default {
     },
     closeTab(tab) {
       this[constants.CLOSE_TAB](tab);
+      this.$root.$emit("closeTab", tab.url);
     },
     clearTabs() {
       this[constants.CLEAR_TABS]();
       this.$router.replace({ path: "/" });
+      this.$root.$emit("clearTabs");
     },
     removeFavority(favority) {
       this[constants.REMOVE_FAVORITY](favority);
