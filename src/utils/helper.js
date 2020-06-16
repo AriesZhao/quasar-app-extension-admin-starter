@@ -1,12 +1,13 @@
+import { Dialog } from "quasar";
 /**
  * 判断对象是否为空
- * @param {*} obj 
+ * @param {*} obj
  */
 export function isEmpty(obj) {
   if (!obj || obj === null || JSON.stringify(obj) === "{}") {
     return true;
-  }else{
-    return false
+  } else {
+    return false;
   }
 }
 
@@ -180,5 +181,22 @@ export function updateTree(tree, entity, insert) {
         updateTree(node.children, entity, insert);
       }
     }
+  });
+}
+
+/**
+ * 弹出确认对话框
+ * @param {String} text
+ * @param {Function} okFn
+ */
+export function confirm(text, okFn) {
+  Dialog.create({
+    title: "确认",
+    message: text,
+    persistent: true,
+    ok: { color: "primary" },
+    cancel: { flat: true },
+  }).onOk(() => {
+    okFn && okFn();
   });
 }

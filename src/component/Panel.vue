@@ -104,6 +104,7 @@ export default {
     }
   },
   methods: {
+    //关闭当前面板
     close() {
       let tabToClose = this.tabList.find((item) => {
         return item.url === this.$route.path;
@@ -113,6 +114,7 @@ export default {
       }
       this.tabClosed = true;
     },
+    //添加至收藏
     addFavority() {
       this[constants.ADD_FAVORITY]({
         title:
@@ -122,6 +124,7 @@ export default {
         url: this.$route.path,
       });
     },
+    //从收藏移除
     removeFavority() {
       this[constants.REMOVE_FAVORITY](this.favority);
     },
