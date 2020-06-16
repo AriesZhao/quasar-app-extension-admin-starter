@@ -84,7 +84,7 @@ export default {
   },
   mounted() {
     this.selection = this.value;
-    this.requestFn().then((ret) => {
+    this.requestFn("").then((ret) => {
       this.options = ret;
     });
   },
@@ -92,7 +92,7 @@ export default {
     filterFn(val, update, abort) {
       if (this.requestFn) {
         update(() => {
-          this.requestFn(val).then((ret) => {
+          this.requestFn(val + "").then((ret) => {
             this.options = ret;
           });
         });
