@@ -75,7 +75,7 @@
       <!--table header-->
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-if="selection || hasEditorSlot" class="selection">
+          <q-th v-if="selection || hasEditorSlot" class="col-selection">
             <q-checkbox
               v-model="selectAll"
               v-if="tableData.length > 0"
@@ -111,7 +111,7 @@
       <!--table body-->
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td v-if="selection || hasEditorSlot" class="selection">
+          <q-td v-if="selection || hasEditorSlot" class="col-selection">
             <q-checkbox v-model="selectedItems" :val="props.row[rowKey]" />
           </q-td>
           <q-td
@@ -309,15 +309,20 @@ export default {
     //save item
     saveItem() {
       if (this.saveFn) {
+        this.loading = true;
         this.saveFn(this.item)
           .then((ret) => {
+            this.loading = false;
             this.item = ret;
-            this.$q.notify("保存成功");
+            if (this.showMessage) {
+              this.$appHelper.info(this.message)
+            }
             this.updateList(this.item);
             this.dialog = false;
           })
           .catch((err) => {
-            this.$q.notify({ message: err, color: "negative" });
+            this.loading = false;
+            this.$appHelper.error(err);
           });
       } else {
         this.$emit("save", this.item);
@@ -480,7 +485,7 @@ export default {
     background: #fafafa
     position: sticky
     right: 0
-  .selection
+  .col-selection
     width: 40px
   .action
     text-align: center

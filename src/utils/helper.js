@@ -1,4 +1,4 @@
-import { Dialog } from "quasar";
+import { Dialog, Notify } from "quasar";
 /**
  * 判断对象是否为空
  * @param {*} obj
@@ -198,5 +198,27 @@ export function confirm(text, okFn) {
     cancel: { flat: true },
   }).onOk(() => {
     okFn && okFn();
+  });
+}
+
+/**
+ * 提示错误信息
+ * @param {Object}} err
+ */
+export function error(err) {
+  Notify.create({
+    message: err,
+    color: "negative",
+  });
+}
+
+/**
+ * 提示信息
+ * @param {String}} message
+ */
+export function info(message) {
+  Notify.create({
+    message: message,
+    icon: 'announcement'
   });
 }

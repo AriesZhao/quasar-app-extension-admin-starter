@@ -88,5 +88,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    showMessage: {
+      type: Boolean,
+      default: true,
+    },
+    message: {
+      type: String,
+      default: "保存成功",
+    },
   },
 };
