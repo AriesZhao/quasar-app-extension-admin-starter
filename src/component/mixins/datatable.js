@@ -44,6 +44,10 @@ export default {
         return [];
       },
     },
+    expandable: {
+      type: Boolean,
+      default: false,
+    },
     selection: {
       type: String,
     },

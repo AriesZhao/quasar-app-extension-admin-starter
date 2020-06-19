@@ -75,6 +75,7 @@
       <!--table header-->
       <template v-slot:header="props">
         <q-tr :props="props">
+          <q-th v-if="expandable" class="col-expand"> </q-th>
           <q-th v-if="selection || hasEditorSlot" class="col-selection">
             <q-checkbox
               v-model="selectAll"
@@ -111,6 +112,16 @@
       <!--table body-->
       <template v-slot:body="props">
         <q-tr :props="props">
+          <q-td auto-width v-if="expandable" class="col-expand">
+            <q-btn
+              size="sm"
+              color="primary"
+              round
+              dense
+              @click="props.expand = !props.expand"
+              :icon="props.expand ? 'remove' : 'add'"
+            />
+          </q-td>
           <q-td v-if="selection || hasEditorSlot" class="col-selection">
             <q-checkbox v-model="selectedItems" :val="props.row[rowKey]" />
           </q-td>
@@ -144,6 +155,9 @@
               @click="editItem(props.row[rowKey])"
             />
           </q-td>
+        </q-tr>
+        <q-tr v-show="props.expand" :props="props">
+          <slot name="body-expand" :row="props.row" />
         </q-tr>
       </template>
     </q-table>
@@ -315,7 +329,7 @@ export default {
             this.loading = false;
             this.item = ret;
             if (this.showMessage) {
-              this.$appHelper.info(this.message)
+              this.$appHelper.info(this.message);
             }
             this.updateList(this.item);
             this.dialog = false;
