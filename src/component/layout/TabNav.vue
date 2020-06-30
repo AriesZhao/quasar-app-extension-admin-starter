@@ -73,7 +73,6 @@
           v-for="tab in tabList"
           :key="tab.url"
           :to="tab.url"
-          exact
           v-bind="tab"
         >
           <div class="q-tab__label">{{ tab.title }}</div>

@@ -1,7 +1,7 @@
 <template>
   <div class="datatable">
     <q-table
-      :filterText="filterText"
+      :filter="filterText"
       :loading="isLoading"
       separator="cell"
       :data="tableData"
@@ -65,7 +65,7 @@
             !requestFn && !($slots['top-right'] || $scopedSlots['top-right'])
           "
         >
-          <q-input outlined dense v-model="filterText" placeholder="查找">
+          <q-input outlined dense clearable v-model="filterText" placeholder="查找">
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -174,7 +174,7 @@
           label="保存"
           color="primary"
           @click="saveItem"
-          v-if="editable && (saveFn || $listeners.save)"
+          v-if="editable && (service || saveFn || $listeners.save)"
         />
       </template>
     </popup-dialog>
@@ -315,6 +315,8 @@ export default {
         this.item = await this.createFn();
       } else if (this.$listeners.create) {
         this.$emit("create");
+      } else if (this.service) {
+        this.item = await this.service.create();
       } else {
         this.item = {};
       }
@@ -322,9 +324,13 @@ export default {
     },
     //save item
     saveItem() {
-      if (this.saveFn) {
+      let fn = this.saveFn;
+      if(!fn && this.service && this.service.save){
+        fn = this.service.save
+      }
+      if (fn) {
         this.loading = true;
-        this.saveFn(this.item)
+        fn(this.item)
           .then((ret) => {
             this.loading = false;
             this.item = ret;

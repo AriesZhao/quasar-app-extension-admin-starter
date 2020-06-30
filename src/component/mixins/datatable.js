@@ -100,5 +100,7 @@ export default {
       type: String,
       default: "保存成功",
     },
+    //服务模板
+    service: {},
   },
 };
