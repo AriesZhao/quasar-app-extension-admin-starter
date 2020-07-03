@@ -6,6 +6,7 @@
     :label="label"
     v-model="dateValue"
     @input="onInput"
+    :dense="dense"
   >
     <template v-slot:append>
       <q-icon name="event" class="cursor-pointer">

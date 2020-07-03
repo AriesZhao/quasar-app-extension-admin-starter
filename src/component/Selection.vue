@@ -16,6 +16,7 @@
       :map-options="mapOptions"
       @filter="filterFn"
       @input="inputFn"
+      :dense="dense"
     />
     <q-select
       v-if="!readonly && !filter"
@@ -30,8 +31,15 @@
       :emit-value="emitValue"
       :map-options="mapOptions"
       @input="inputFn"
+      :dense="dense"
     />
-    <q-input :label="label" v-model="displayValue" readonly v-if="readonly" />
+    <q-input
+      :label="label"
+      v-model="displayValue"
+      readonly
+      v-if="readonly"
+      :dense="dense"
+    />
   </div>
 </template>
 

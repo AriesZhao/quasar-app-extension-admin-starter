@@ -213,12 +213,57 @@ export function error(err) {
 }
 
 /**
- * 提示信息
- * @param {String}} message
+ * 提示警告信息
+ * @param {Object}} err
  */
-export function info(message) {
+export function warn(msg) {
   Notify.create({
-    message: message,
+    message: msg
+  });
+}
+
+/**
+ * 提示信息
+ * @param {String}} msg
+ */
+export function info(msg) {
+  Notify.create({
+    message: msg,
     icon: 'announcement'
   });
+}
+
+/**
+ * 取得需要调用的方法
+ * @param {String} name
+ * @param {Vue Component} vm
+ */
+export function getFn (name, vm) {
+  // 1. 有方法定义
+  if (vm && vm[name + 'Fn']) {
+    return vm[name + 'Fn']
+  }
+  // 2. 父类有定义
+  if (vm.$parent && vm.$parent[name]) { return vm.$parent[name] }
+  // 3. 有Service定义
+  if (vm.service && vm.service[name]) { return vm.service[name] }
+  return null
+}
+
+/**
+ * 调用方法
+ * @param {String} name
+ * @param {Vue Component} vm
+ * @param {Object} param
+ */
+export function callFn (name, vm, param) {
+  let fn = getFn(name, vm)
+  if (fn) {
+    return fn(param)
+  } else if (vm.$listeners[name]) {
+    vm.$emit(name, param)
+    return new Promise((resolve) => {
+      resolve()
+    })
+  }
 }

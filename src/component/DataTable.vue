@@ -65,7 +65,13 @@
             !requestFn && !($slots['top-right'] || $scopedSlots['top-right'])
           "
         >
-          <q-input outlined dense clearable v-model="filterText" placeholder="查找">
+          <q-input
+            outlined
+            dense
+            clearable
+            v-model="filterText"
+            placeholder="查找"
+          >
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -288,9 +294,13 @@ export default {
       let pageable = {
         page: props.pagination.page - 1,
         size: props.pagination.rowsPerPage,
-        sort: props.pagination.sortBy,
-        direction: props.pagination.descending ? "DESC" : "ASC",
       };
+      if (props.pagination.sortBy) {
+        pageable.sort =
+          props.pagination.sortBy +
+          "," +
+          (props.pagination.descending ? "DESC" : "ASC");
+      }
       this.isLoading = true;
       this.requestFn(pageable)
         .then((ret) => {
@@ -325,8 +335,8 @@ export default {
     //save item
     saveItem() {
       let fn = this.saveFn;
-      if(!fn && this.service && this.service.save){
-        fn = this.service.save
+      if (!fn && this.service && this.service.save) {
+        fn = this.service.save;
       }
       if (fn) {
         this.loading = true;
