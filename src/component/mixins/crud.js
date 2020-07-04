@@ -68,7 +68,7 @@ export default {
       this.$parent.edit && this.$parent.edit();
       this.$emit("edit");
     },
-    save() {
+    save(callback) {
       this.$appHelper
         .callFn("save", this, this.entityVal)
         .then((ret) => {
@@ -77,6 +77,7 @@ export default {
           this.entityVal = ret;
           this.$emit("change", this.entityVal);
           this.$appHelper.info("保存成功");
+          callback && callback(this.entityVal);
         })
         .catch((err) => {
           this.saving = false;

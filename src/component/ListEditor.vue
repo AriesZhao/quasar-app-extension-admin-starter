@@ -12,7 +12,7 @@
           label="保存"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
-          @click="save"
+          @click="saveItem"
         />
         <q-btn
           label="编辑"
@@ -78,14 +78,13 @@ export default {
   data() {
     return {
       itemList: [],
-      item: null,
       lastItem: null,
     };
   },
   watch: {
     list(val) {
       this.itemList = val;
-      if (!this.item && this.itemList && this.itemList.length > 0) {
+      if (!this.entityVal && this.itemList && this.itemList.length > 0) {
         this.choose(this.list[0]);
       }
     },
@@ -94,7 +93,7 @@ export default {
     this.itemList = this.list;
     if (!this.$appHelper.isEmpty(this.entity)) {
       this.choose(this.entity);
-    } else if (!this.item && this.itemList && this.itemList.length > 0) {
+    } else if (!this.entityVal && this.itemList && this.itemList.length > 0) {
       this.choose(this.list[0]);
     }
   },
@@ -105,26 +104,34 @@ export default {
         let ret = {};
         Object.assign(ret, item);
         this.lastItem = ret;
-        this.item = ret;
-        this.$emit("change", this.item);
+        this.entityVal = ret;
+        this.$emit("change", this.entityVal);
       }
     },
     cancel() {
       if (this.lastItem) {
         this.status = "view";
-        this.item = this.lastItem;
-        this.$emit("change", this.item);
+        this.entityVal = this.lastItem;
+        this.$emit("change", this.entityVal);
       } else if (this.list.length > 0) {
         this.status = "view";
-        this.item = this.list[0];
-        this.$emit("change", this.item);
+        this.entityVal = this.list[0];
+        this.$emit("change", this.entityVal);
       } else {
         this.status = "blank";
-        this.item = null;
-        this.$emit("change", this.item);
+        this.entityVal = null;
+        this.$emit("change", this.entityVal);
       }
       this.$parent.cancel && this.$parent.cancel();
       this.$emit("cancel");
+    },
+    saveItem() {
+      let insert = this.$appHelper.isEmpty(this.entityVal.id);
+      this.save((ret) => {
+        if (insert) {
+          this.itemList.push(ret);
+        }
+      });
     },
   },
 };

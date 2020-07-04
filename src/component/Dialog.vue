@@ -25,7 +25,7 @@ export default {
   props: {
     value: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
     persistent: {
@@ -56,6 +56,14 @@ export default {
     };
   },
   methods: {
+    show(){
+      this.showDlg = true
+      this.$emit("change", this.showDlg);
+    },
+    hide(){
+      this.showDlg = false
+      this.$emit("change", this.showDlg);
+    },
     onChange(val) {
       this.showDlg = val;
       this.$emit("change", this.showDlg);
