@@ -22,7 +22,7 @@
           label="保存"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
-          @click="save"
+          @click="saveNode"
         />
         <q-btn
           label="编辑"
@@ -130,6 +130,24 @@ export default {
         this.node = ret;
         this.$emit("change", this.node);
       }
+    },
+    saveNode() {
+      this.saving = true;
+      let insert = this.$appHelper.isEmpty(this.entityVal.id);
+      this.$appHelper
+        .callFn("save", this, this.entityVal)
+        .then((ret) => {
+          this.saving = false;
+          this.status = "view";
+          this.entityVal = ret;
+          this.$appHelper.updateTree(this.nodeList, this.entityVal, insert);
+          this.$q.notify("保存成功");
+          this.$emit("change", this.entityVal);
+        })
+        .catch((err) => {
+          this.saving = false;
+          this.$appHelper.error(err);
+        });
     },
     cancel() {
       if (this.lastINode) {
