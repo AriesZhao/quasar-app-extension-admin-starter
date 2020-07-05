@@ -55,17 +55,36 @@ export default {
     this.entityVal = this.entity;
   },
   methods: {
-    create() {
-      this.$appHelper.callFn("create", this).then((ret) => {
-        this.status = "create";
-        this.entityVal = ret;
-        this.$emit("change", this.entityVal);
-      });
+    create(callback) {
+      this.status = "create";
+      this.$appHelper
+        .callFn("create", this)
+        .then((ret) => {
+          this.entityVal = ret;
+          this.$emit("change", this.entityVal);
+          if (typeof callback === "function") {
+            callback(this.entityVal);
+          }
+        })
+        .catch((err) => {
+          this.$appHelper.error(err);
+        });
       this.$emit("create");
     },
-    edit() {
+    edit(callback) {
       this.status = "edit";
-      this.$parent.edit && this.$parent.edit();
+      this.$appHelper
+        .callFn("edit", this)
+        .then((ret) => {
+          this.entityVal = ret;
+          this.$emit("change", this.entityVal);
+          if (typeof callback === "function") {
+            callback(this.entityVal);
+          }
+        })
+        .catch((err) => {
+          this.$appHelper.error(err);
+        });
       this.$emit("edit");
     },
     save(callback) {
@@ -77,7 +96,9 @@ export default {
           this.entityVal = ret;
           this.$emit("change", this.entityVal);
           this.$appHelper.info("保存成功");
-          callback && callback(this.entityVal);
+          if (typeof callback === "function") {
+            callback(this.entityVal);
+          }
         })
         .catch((err) => {
           this.saving = false;
@@ -90,6 +111,7 @@ export default {
     },
     doRemove() {
       this.status = "blank";
+      this.removing = true;
       this.$appHelper
         .callFn("remove", this, this.entityVal.id)
         .then((ret) => {
