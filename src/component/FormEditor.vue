@@ -35,7 +35,7 @@
         />
       </div>
     </template>
-    <slot name="form" :readonly="readonly" />
+    <slot name="form" :readonly="readonly" :mode="status" />
   </panel>
 </template>
 
@@ -48,9 +48,6 @@ export default {
   props: {
     actoin: {
       type: String,
-    },
-    saveFn: {
-      type: Function,
     },
   },
   methods: {
