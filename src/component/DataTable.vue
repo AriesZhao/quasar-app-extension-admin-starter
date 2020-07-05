@@ -124,8 +124,8 @@
               color="primary"
               round
               dense
-              @click="props.expand = !props.expand"
-              :icon="props.expand ? 'remove' : 'add'"
+              @click="expandItem(props.row)"
+              :icon="props.row.expand ? 'remove' : 'add'"
             />
           </q-td>
           <q-td v-if="selection || hasEditorSlot" class="col-selection">
@@ -162,7 +162,7 @@
             />
           </q-td>
         </q-tr>
-        <q-tr v-show="props.expand" :props="props">
+        <q-tr v-show="props.row.expand" :props="props">
           <slot name="body-expand" :row="props.row" />
         </q-tr>
       </template>
@@ -285,6 +285,12 @@ export default {
     },
   },
   methods: {
+    expandItem(row) {
+      let item = this.tableData.find((item) => {
+        return row[this.rowKey] === item[this.rowKey];
+      });
+      this.$set(item, "expand", !item.expand);
+    },
     //refresh table
     refresh() {
       this.onRequest({ pagination: this.pagination });
