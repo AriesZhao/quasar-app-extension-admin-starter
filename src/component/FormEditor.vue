@@ -4,38 +4,41 @@
       <div class="q-gutter-sm">
         <q-btn
           label="新建"
+          :loading="loading"
           color="secondary"
-          v-if="creatable && (status === 'view' || status === 'blank')"
-          @click="create"
+          v-if="creatable && (modeVal === 'view' || modeVal === 'blank')"
+          @click="process('create')"
         />
         <q-btn
-          :loading="saving"
           label="保存"
+          :loading="loading"
           color="primary"
-          v-if="status === 'create' || status === 'edit'"
-          @click="save"
+          v-if="modeVal === 'create' || modeVal === 'edit'"
+          @click="process('save')"
         />
         <q-btn
           label="编辑"
+          :loading="loading"
           color="primary"
-          v-if="editable && status === 'view'"
-          @click="edit"
+          v-if="editable && modeVal === 'view'"
+          @click="process('edit')"
         />
         <q-btn
           label="删除"
+          :loading="loading"
           color="negative"
-          v-if="removable && status === 'view'"
+          v-if="removable && modeVal === 'view'"
           @click="remove"
         />
         <q-btn
           label="取消"
           color="secondary"
-          v-if="status === 'edit'"
+          v-if="modeVal === 'edit'"
           @click="cancel"
         />
       </div>
     </template>
-    <slot name="form" :readonly="readonly" :mode="status" />
+    <slot name="form" :readonly="readonly" :mode="modeVal" />
   </panel>
 </template>
 
@@ -49,10 +52,35 @@ export default {
     actoin: {
       type: String,
     },
+    initFn: {
+      type: Function,
+    },
+  },
+  mounted() {
+    this.init();
   },
   methods: {
+    init() {
+      let action = this.action || this.$parent.$props.action;
+      if (action === "create" || !action) {
+        //新建
+        this.process("create");
+      } else if (action.indexOf("@") === 0) {
+        //编辑
+        this.process("get", action.substring(1, action.length), () => {
+          this.modeVal = "edit";
+        });
+      } else {
+        //查看
+        this.process("get", action, () => {
+          this.modeVal = "view";
+        });
+      }
+      this.callFn("init", action);
+    },
+    //取消编辑
     cancel() {
-      this.status = "view";
+      this.modeVal = "view";
     },
   },
 };

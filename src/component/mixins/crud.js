@@ -1,4 +1,6 @@
+import base from "./base";
 export default {
+  mixins: [base],
   model: {
     prop: "entity",
     event: "change",
@@ -23,109 +25,91 @@ export default {
       type: Boolean,
       default: true,
     },
+    createFn: {
+      type: Function,
+    },
+    getFn: {
+      type: Function,
+    },
+    editFn: {
+      type: Function,
+    },
     saveFn: {
       type: Function,
     },
-    removeFn: {},
+    removeFn: {
+      type: Function,
+    },
     service: {},
   },
   data() {
     return {
-      status: "blank",
-      saving: false,
-      removing: false,
       entityVal: null,
+      modeVal: "blank",
+      loading: false,
     };
   },
   computed: {
     readonly() {
-      return this.status === "blank" || this.status === "view";
+      return this.modeVal === "blank" || this.modeVal === "view";
     },
   },
   watch: {
     mode(val) {
-      this.status = val;
+      this.modeVal = val;
     },
     entity(val) {
       this.entityVal = val;
     },
   },
   mounted() {
-    this.status = this.mode;
+    this.modeVal = this.mode;
     this.entityVal = this.entity;
   },
   methods: {
-    create(callback) {
-      this.status = "create";
-      this.$appHelper
-        .callFn("create", this)
-        .then((ret) => {
-          this.entityVal = ret;
-          this.$emit("change", this.entityVal);
-          if (typeof callback === "function") {
-            callback(this.entityVal);
-          }
-        })
-        .catch((err) => {
-          this.$appHelper.error(err);
-        });
-      this.$emit("create");
+    //处理
+    process(action, val, callback) {
+      this.modeVal = action;
+      this.loading = true;
+      let fnRet = this.callFn(action, val || this.entityVal);
+      if (fnRet) {
+        fnRet
+          .then((ret) => {
+            this.updateEntityValue(ret, callback);
+          })
+          .catch((err) => {
+            this.onError(err);
+          });
+        this.$emit(action);
+      }else{
+        this.loading = false
+      }
     },
-    edit(callback) {
-      this.status = "edit";
-      this.$appHelper
-        .callFn("edit", this)
-        .then((ret) => {
-          this.entityVal = ret;
-          this.$emit("change", this.entityVal);
-          if (typeof callback === "function") {
-            callback(this.entityVal);
-          }
-        })
-        .catch((err) => {
-          this.$appHelper.error(err);
-        });
-      this.$emit("edit");
-    },
-    save(callback) {
-      this.$appHelper
-        .callFn("save", this, this.entityVal)
-        .then((ret) => {
-          this.saving = false;
-          this.status = "view";
-          this.entityVal = ret;
-          this.$emit("change", this.entityVal);
-          this.$appHelper.info("保存成功");
-          if (typeof callback === "function") {
-            callback(this.entityVal);
-          }
-        })
-        .catch((err) => {
-          this.saving = false;
-          this.$appHelper.error(err);
-        });
-      this.$emit("save");
-    },
+    //删除确认
     remove() {
-      this.$appHelper.confirm("确定要删除当前对象吗？", this.doRemove);
+      this.confirm(
+        "确定要删除当前对象吗？",
+        this.process("remove", this.entityVal.id),
+        () => {
+          this.modeVal = "blank";
+        }
+      );
     },
-    doRemove() {
-      this.status = "blank";
-      this.removing = true;
-      this.$appHelper
-        .callFn("remove", this, this.entityVal.id)
-        .then((ret) => {
-          this.removing = false;
-          this.status = "blank";
-          this.entityVal = null;
-          this.$emit("change", this.entityVal);
-          this.$q.notify("删除成功");
-        })
-        .catch((err) => {
-          this.removing = false;
-          this.$appHelper.error(err);
-        });
-      this.$appHelper.info("remove");
+    //更新模型
+    updateEntityValue(val, callback) {
+      this.loading = false;
+      if (!this.isEmpty(val)) {
+        this.entityVal = val;
+        this.$emit("change", this.entityVal);
+        if (typeof callback === "function") {
+          callback(this.entityVal);
+        }
+      }
+    },
+    //错误处理
+    onError(err) {
+      this.loading = false;
+      this.error(err);
     },
   },
 };
