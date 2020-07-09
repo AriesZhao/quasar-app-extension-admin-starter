@@ -1,5 +1,5 @@
 <template>
-  <panel ref="panel" v-bind="$props">
+  <panel ref="panel" v-bind="$props" @init="init">
     <template slot="actions">
       <div class="q-gutter-sm">
         <q-btn
@@ -14,7 +14,7 @@
           :loading="loading"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
-          @click="process('save')"
+          @click="save"
         />
         <q-btn
           label="编辑"
@@ -82,16 +82,22 @@ export default {
         });
       }
     },
+    //保存
+    save() {
+      this.process("save", this.entity, () => {
+        this.status = "view";
+      });
+    },
     //删除确认
     remove() {
       this.confirm("确定要删除当前对象吗？", this.doRemove);
     },
     //删除操作
     doRemove() {
-      this.process("remove", this.entityVal.id),
+      this.process("remove", this.entity.id),
         () => {
           this.status = "blank";
-          this.$refs.panel.close()
+          this.$refs.panel.close();
         };
     },
     //取消编辑

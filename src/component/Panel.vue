@@ -79,6 +79,7 @@ export default {
   },
   data() {
     return {
+      tabPath: null,
       tabClosed: false,
     };
   },
@@ -90,9 +91,10 @@ export default {
     },
   },
   mounted() {
+    this.tabPath = this.$route.path;
     // 监听Tab关闭
     this.$root.$on("closeTab", (path) => {
-      if (this.$route.path === path) {
+      if (this.tabPath === path) {
         this.tabClosed = true;
       }
     });

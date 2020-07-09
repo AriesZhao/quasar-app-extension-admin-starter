@@ -73,11 +73,13 @@ export default {
   props: {
     list: {
       type: Array,
-      default: [],
     },
     itemKey: {
       type: String,
       default: "id",
+    },
+    listFn: {
+      type: Function,
     },
   },
   data() {
@@ -95,7 +97,9 @@ export default {
     },
   },
   mounted() {
-    this.itemList = this.list;
+    if (this.list) {
+      this.itemList = this.list;
+    }
     if (!this.isEmpty(this.entity)) {
       this.choose(this.entity);
     } else if (!this.entity && this.itemList && this.itemList.length > 0) {
@@ -103,6 +107,29 @@ export default {
     }
   },
   methods: {
+    //刷新
+    refresh() {
+      if (this.list) {
+        this.itemList = this.list;
+        if (this.itemList.length > 0) {
+          this.entity = this.itemList[0];
+        }
+      } else {
+        let fnRet = this.callFn("list");
+        if (fnRet) {
+          fnRet
+            .then((ret) => {
+              this.listItem = this.list;
+              if (this.itemList.length > 0) {
+                this.entity = this.itemList[0];
+              }
+            })
+            .catch((err) => {
+              this.onError(err);
+            });
+        }
+      }
+    },
     //选择
     choose(item) {
       if (item && item.id) {
