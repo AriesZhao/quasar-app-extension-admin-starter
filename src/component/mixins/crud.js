@@ -81,7 +81,9 @@ export default {
             }
           })
           .catch((err) => {
-            this.onError(err);
+            if (!err.processed) {
+              this.onError(err);
+            }
           });
         return true;
       } else if (this.$listeners[action]) {
