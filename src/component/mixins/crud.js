@@ -2,7 +2,7 @@ import base from "./base";
 export default {
   mixins: [base],
   model: {
-    prop: "entity",
+    prop: "value",
     event: "change",
   },
   props: {
@@ -10,7 +10,7 @@ export default {
       type: String,
       default: "blank",
     },
-    entity: {
+    value: {
       type: Object,
     },
     creatable: {
@@ -44,66 +44,59 @@ export default {
   },
   data() {
     return {
-      entityVal: null,
-      modeVal: "blank",
+      entity: null,
+      status: "blank",
       loading: false,
     };
   },
   computed: {
     readonly() {
-      return this.modeVal === "blank" || this.modeVal === "view";
+      return this.status === "blank" || this.status === "view";
     },
   },
   watch: {
     mode(val) {
-      this.modeVal = val;
+      this.status = val;
     },
-    entity(val) {
-      this.entityVal = val;
+    value(val) {
+      this.entity = val;
     },
   },
   mounted() {
-    this.modeVal = this.mode;
-    this.entityVal = this.entity;
+    this.status = this.mode;
+    this.entity = this.value;
   },
   methods: {
     //处理
     process(action, val, callback) {
-      this.modeVal = action;
+      this.status = action;
       this.loading = true;
-      let fnRet = this.callFn(action, val || this.entityVal);
+      let fnRet = this.callFn(action, val || this.entity);
       if (fnRet) {
         fnRet
           .then((ret) => {
-            this.updateEntityValue(ret, callback);
+            this.updateValue(ret, callback);
           })
           .catch((err) => {
             this.onError(err);
           });
-        this.$emit(action);
-      }else{
-        this.loading = false
+        return true;
+      } else if (this.$listeners[action]) {
+        this.$emit(action, callback);
+        this.loading = false;
+        return true;
+      } else {
+        this.loading = false;
+        return false;
       }
     },
-    //删除确认
-    remove() {
-      this.confirm(
-        "确定要删除当前对象吗？",
-        this.process("remove", this.entityVal.id),
-        () => {
-          this.modeVal = "blank";
-        }
-      );
-    },
     //更新模型
-    updateEntityValue(val, callback) {
+    updateValue(val, callback) {
       this.loading = false;
-      if (!this.isEmpty(val)) {
-        this.entityVal = val;
-        this.$emit("change", this.entityVal);
-        if (typeof callback === "function") {
-          callback(this.entityVal);
-        }
+      this.entity = val;
+      this.$emit("change", this.entity);
+      if (typeof callback === "function") {
+        callback(this.entity);
       }
     },
     //错误处理

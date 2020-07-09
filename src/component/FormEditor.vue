@@ -1,44 +1,44 @@
 <template>
-  <panel v-bind="$props">
+  <panel ref="panel" v-bind="$props">
     <template slot="actions">
       <div class="q-gutter-sm">
         <q-btn
           label="新建"
           :loading="loading"
           color="secondary"
-          v-if="creatable && (modeVal === 'view' || modeVal === 'blank')"
+          v-if="creatable && (status === 'view' || status === 'blank')"
           @click="process('create')"
         />
         <q-btn
           label="保存"
           :loading="loading"
           color="primary"
-          v-if="modeVal === 'create' || modeVal === 'edit'"
+          v-if="status === 'create' || status === 'edit'"
           @click="process('save')"
         />
         <q-btn
           label="编辑"
           :loading="loading"
           color="primary"
-          v-if="editable && modeVal === 'view'"
+          v-if="editable && status === 'view'"
           @click="process('edit')"
         />
         <q-btn
           label="删除"
           :loading="loading"
           color="negative"
-          v-if="removable && modeVal === 'view'"
+          v-if="removable && status === 'view'"
           @click="remove"
         />
         <q-btn
           label="取消"
           color="secondary"
-          v-if="modeVal === 'edit'"
+          v-if="status === 'edit'"
           @click="cancel"
         />
       </div>
     </template>
-    <slot name="form" :readonly="readonly" :mode="modeVal" />
+    <slot name="form" :readonly="readonly" :mode="status" />
   </panel>
 </template>
 
@@ -57,9 +57,14 @@ export default {
     },
   },
   mounted() {
-    this.init();
+    if (this.initFn) {
+      this.initFn();
+    } else {
+      this.init();
+    }
   },
   methods: {
+    //初始化
     init() {
       let action = this.action || this.$parent.$props.action;
       if (action === "create" || !action) {
@@ -68,19 +73,30 @@ export default {
       } else if (action.indexOf("@") === 0) {
         //编辑
         this.process("get", action.substring(1, action.length), () => {
-          this.modeVal = "edit";
+          this.status = "edit";
         });
       } else {
         //查看
         this.process("get", action, () => {
-          this.modeVal = "view";
+          this.status = "view";
         });
       }
-      this.callFn("init", action);
+    },
+    //删除确认
+    remove() {
+      this.confirm("确定要删除当前对象吗？", this.doRemove);
+    },
+    //删除操作
+    doRemove() {
+      this.process("remove", this.entityVal.id),
+        () => {
+          this.status = "blank";
+          this.$refs.panel.close()
+        };
     },
     //取消编辑
     cancel() {
-      this.modeVal = "view";
+      this.status = "view";
     },
   },
 };

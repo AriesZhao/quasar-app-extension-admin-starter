@@ -6,7 +6,7 @@
           label="新建"
           color="secondary"
           v-if="creatable && (status === 'view' || status === 'blank')"
-          @click="create"
+          @click="process('create')"
         />
         <q-btn
           label="保存"
@@ -18,7 +18,7 @@
           label="编辑"
           color="primary"
           v-if="editable && status === 'view'"
-          @click="edit"
+          @click="process('edit')"
         />
         <q-btn
           label="删除"
@@ -84,54 +84,85 @@ export default {
   watch: {
     list(val) {
       this.itemList = val;
-      if (!this.entityVal && this.itemList && this.itemList.length > 0) {
+      if (!this.entity && this.itemList && this.itemList.length > 0) {
         this.choose(this.list[0]);
       }
     },
   },
   mounted() {
     this.itemList = this.list;
-    if (!this.$appHelper.isEmpty(this.entity)) {
+    if (!this.isEmpty(this.entity)) {
       this.choose(this.entity);
-    } else if (!this.entityVal && this.itemList && this.itemList.length > 0) {
+    } else if (!this.entity && this.itemList && this.itemList.length > 0) {
       this.choose(this.list[0]);
     }
   },
   methods: {
+    //选择
     choose(item) {
-      if (this.readonly) {
-        this.status = "view";
-        let ret = {};
-        Object.assign(ret, item);
-        this.lastItem = ret;
-        this.entityVal = ret;
-        this.$emit("change", this.entityVal);
+      if (this.readonly && item && item.id) {
+        //只有只读状态可以选择
+        let ret = this.process("get", item.id, (ret) => {
+          if (!this.isEmpty(ret)) {
+            this.status = "view";
+            let entity = {};
+            Object.assign(entity, item);
+            this.lastItem = item;
+            this.updateValue(entity);
+          }
+        });
+        if (item && !ret) {
+          //没有对应的处理方法
+          this.status = "view";
+          let entity = {};
+          Object.assign(entity, item);
+          this.lastItem = item;
+          this.updateValue(entity);
+        }
       }
     },
+    //取消编辑
     cancel() {
       if (this.lastItem) {
         this.status = "view";
-        this.entityVal = this.lastItem;
-        this.$emit("change", this.entityVal);
+        this.entity = this.lastItem;
+        this.$emit("change", this.entity);
       } else if (this.list.length > 0) {
         this.status = "view";
-        this.entityVal = this.list[0];
-        this.$emit("change", this.entityVal);
+        this.entity = this.list[0];
+        this.$emit("change", this.entity);
       } else {
         this.status = "blank";
-        this.entityVal = null;
-        this.$emit("change", this.entityVal);
+        this.entity = null;
+        this.$emit("change", this.entity);
       }
       this.$parent.cancel && this.$parent.cancel();
       this.$emit("cancel");
     },
+    //保存项目
     saveItem() {
-      let insert = this.$appHelper.isEmpty(this.entityVal.id);
-      this.save((ret) => {
+      let insert = this.isEmpty(this.entity.id);
+      this.process("save", this.entity, (ret) => {
         if (insert) {
           this.itemList.push(ret);
         }
       });
+    },
+    //删除确认
+    remove() {
+      this.confirm("确定要删除当前对象吗？", this.doRemove);
+    },
+    //删除操作
+    doRemove() {
+      this.process("remove", this.entityVal.id),
+        () => {
+          if (this.lastItem) {
+            this.choose(this.lastItem);
+          } else {
+            this.status = "blank";
+            this.updateValue(null);
+          }
+        };
     },
   },
 };
