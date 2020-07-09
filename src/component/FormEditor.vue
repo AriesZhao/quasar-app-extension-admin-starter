@@ -84,15 +84,27 @@ export default {
     },
     //保存
     save() {
+      let validateFn = this.findFn("validate");
+      if (validateFn && validateFn(this.entity)) {
+        //验证通过
+        this.doSave();
+      } else if (!validateFn) {
+        //没有定义验证方法
+        this.doSave();
+      }
+    },
+    //保存处理
+    doSave() {
       this.process("save", this.entity, () => {
         this.status = "view";
+        this.info("保存成功");
       });
     },
     //删除确认
     remove() {
       this.confirm("确定要删除当前对象吗？", this.doRemove);
     },
-    //删除操作
+    //删除处理
     doRemove() {
       this.process("remove", this.entity.id),
         () => {
