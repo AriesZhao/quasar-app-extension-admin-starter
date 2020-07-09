@@ -7,7 +7,7 @@
           :loading="loading"
           color="secondary"
           v-if="creatable && (status === 'view' || status === 'blank')"
-          @click="process('create')"
+          @click="create"
         />
         <q-btn
           label="保存"
@@ -21,7 +21,7 @@
           :loading="loading"
           color="primary"
           v-if="editable && status === 'view'"
-          @click="process('edit')"
+          @click="edit(entity.id)"
         />
         <q-btn
           label="删除"
@@ -69,18 +69,32 @@ export default {
       let action = this.action || this.$parent.$props.action;
       if (action === "create" || !action) {
         //新建
-        this.process("create");
+        this.create();
       } else if (action.indexOf("@") === 0) {
         //编辑
-        this.process("get", action.substring(1, action.length), () => {
-          this.status = "edit";
-        });
+        this.edit(action.substring(1, action.length));
       } else {
         //查看
-        this.process("get", action, () => {
-          this.status = "view";
-        });
+        this.view(action);
       }
+    },
+    //新建
+    create() {
+      this.process("create", null, () => {
+        this.status = "create";
+      });
+    },
+    //查看
+    view(id) {
+      this.process("get", id, () => {
+        this.status = "view";
+      });
+    },
+    //编辑
+    edit(id) {
+      this.process("get", id, () => {
+        this.status = "edit";
+      });
     },
     //保存
     save() {

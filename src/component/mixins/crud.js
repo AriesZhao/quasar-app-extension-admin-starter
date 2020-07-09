@@ -69,7 +69,6 @@ export default {
   methods: {
     //处理
     process(action, val, callback) {
-      this.status = action;
       this.loading = true;
       let fnRet = this.callFn(action, val || this.entity);
       if (fnRet) {
@@ -82,7 +81,10 @@ export default {
           })
           .catch((err) => {
             if (!err.processed) {
-              this.onError(err);
+              this.loading = false;
+              this.error(err);
+            } else {
+              this.loading = false;
             }
           });
         return true;
@@ -106,11 +108,6 @@ export default {
         this.entity = val;
         this.$emit("change", this.entity);
       }
-    },
-    //错误处理
-    onError(err) {
-      this.loading = false;
-      this.error(err);
     },
   },
 };
