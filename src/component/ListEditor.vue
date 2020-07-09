@@ -105,7 +105,6 @@ export default {
   methods: {
     //选择
     choose(item) {
-      debugger
       if (item && item.id) {
         let ret = this.process("get", item.id, (ret) => {
           if (!this.isEmpty(ret)) {
@@ -151,6 +150,8 @@ export default {
         this.status = "view";
         if (insert) {
           this.itemList.push(ret);
+        } else {
+          this.itemList.splice(this.itemList.indexOf(this.entity), 1, ret);
         }
       });
     },
@@ -161,6 +162,7 @@ export default {
     //删除操作
     doRemove() {
       this.process("remove", this.entity.id, () => {
+        this.itemList.splice(this.itemList.indexOf(this.entity), 1);
         if (this.lastItem) {
           this.choose(this.lastItem);
         } else if (this.itemList && this.itemList.length > 0) {

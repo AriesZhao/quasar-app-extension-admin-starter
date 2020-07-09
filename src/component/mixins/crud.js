@@ -75,7 +75,6 @@ export default {
       if (fnRet) {
         fnRet
           .then((ret) => {
-            debugger
             this.updateValue(ret);
             if (typeof callback === "function") {
               callback(this.entity);
