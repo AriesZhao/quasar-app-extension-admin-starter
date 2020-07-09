@@ -120,11 +120,10 @@ export default {
     },
     //删除处理
     doRemove() {
-      this.process("remove", this.entity.id),
-        () => {
-          this.status = "blank";
-          this.$refs.panel.close();
-        };
+      this.process("remove", this.entity.id, () => {
+        this.status = "blank";
+        this.$refs.panel.close();
+      });
     },
     //取消编辑
     cancel() {
