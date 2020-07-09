@@ -75,15 +75,22 @@ export default {
       if (fnRet) {
         fnRet
           .then((ret) => {
-            this.updateValue(ret, callback);
+            debugger
+            this.updateValue(ret);
+            if (typeof callback === "function") {
+              callback(this.entity);
+            }
           })
           .catch((err) => {
             this.onError(err);
           });
         return true;
       } else if (this.$listeners[action]) {
-        this.$emit(action, callback);
+        this.$emit(action);
         this.loading = false;
+        if (typeof callback === "function") {
+          callback(this.entity);
+        }
         return true;
       } else {
         this.loading = false;
@@ -91,12 +98,12 @@ export default {
       }
     },
     //更新模型
-    updateValue(val, callback) {
+    updateValue(val) {
       this.loading = false;
-      this.entity = val;
-      this.$emit("change", this.entity);
-      if (typeof callback === "function") {
-        callback(this.entity);
+      if (!this.isEmpty(val)) {
+        //结果不为空
+        this.entity = val;
+        this.$emit("change", this.entity);
       }
     },
     //错误处理

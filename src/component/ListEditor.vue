@@ -4,30 +4,35 @@
       <div class="q-gutter-sm">
         <q-btn
           label="新建"
+          :loading="loading"
           color="secondary"
           v-if="creatable && (status === 'view' || status === 'blank')"
           @click="process('create')"
         />
         <q-btn
           label="保存"
+          :loading="loading"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
           @click="saveItem"
         />
         <q-btn
           label="编辑"
+          :loading="loading"
           color="primary"
           v-if="editable && status === 'view'"
           @click="process('edit')"
         />
         <q-btn
           label="删除"
+          :loading="loading"
           color="negative"
           v-if="removable && status === 'view'"
           @click="remove"
         />
         <q-btn
           label="取消"
+          :loading="loading"
           color="secondary"
           v-if="status === 'edit' || status === 'create'"
           @click="cancel"
@@ -100,8 +105,8 @@ export default {
   methods: {
     //选择
     choose(item) {
-      if (this.readonly && item && item.id) {
-        //只有只读状态可以选择
+      debugger
+      if (item && item.id) {
         let ret = this.process("get", item.id, (ret) => {
           if (!this.isEmpty(ret)) {
             this.status = "view";
@@ -143,6 +148,7 @@ export default {
     saveItem() {
       let insert = this.isEmpty(this.entity.id);
       this.process("save", this.entity, (ret) => {
+        this.status = "view";
         if (insert) {
           this.itemList.push(ret);
         }
@@ -154,15 +160,17 @@ export default {
     },
     //删除操作
     doRemove() {
-      this.process("remove", this.entityVal.id),
-        () => {
-          if (this.lastItem) {
-            this.choose(this.lastItem);
-          } else {
-            this.status = "blank";
-            this.updateValue(null);
-          }
-        };
+      this.process("remove", this.entity.id, () => {
+        if (this.lastItem) {
+          this.choose(this.lastItem);
+        } else if (this.itemList && this.itemList.length > 0) {
+          this.status = "view";
+          this.choose(this.itemList[0]);
+        } else {
+          this.status = "view";
+          this.updateValue(null);
+        }
+      });
     },
   },
 };
