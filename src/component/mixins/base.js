@@ -1,4 +1,3 @@
-import { Dialog, Notify } from "quasar";
 //全局Mixin
 export default {
   methods: {
@@ -18,29 +17,21 @@ export default {
      * @param {Object}} err
      */
     error(err) {
-      Notify.create({
-        message: err,
-        color: "negative",
-      });
+      this.$appHelper.error(msg);
     },
     /**
      * 警告信息
      * @param {Object}} err
      */
     warn(msg) {
-      Notify.create({
-        message: msg,
-      });
+      this.$appHelper.warn(msg);
     },
     /**
      * 提示信息
      * @param {String}} msg
      */
     info(msg) {
-      Notify.create({
-        message: msg,
-        icon: "announcement",
-      });
+      this.$appHelper.info(msg);
     },
     /**
      * 确认
@@ -48,15 +39,7 @@ export default {
      * @param {Function} okFn
      */
     confirm(text, okFn) {
-      Dialog.create({
-        title: "确认",
-        message: text,
-        persistent: true,
-        ok: { color: "primary" },
-        cancel: { flat: true },
-      }).onOk(() => {
-        okFn && okFn();
-      });
+      this.$appHelper.confirm(text, okFn);
     },
     /**
      * 取得需要调用的方法

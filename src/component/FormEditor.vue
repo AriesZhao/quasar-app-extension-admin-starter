@@ -38,6 +38,7 @@
         />
       </div>
     </template>
+    
     <slot name="form" :readonly="readonly" :mode="status" />
   </panel>
 </template>
@@ -98,17 +99,6 @@ export default {
     },
     //保存
     save() {
-      let validateFn = this.findFn("validate");
-      if (validateFn && validateFn(this.entity)) {
-        //验证通过
-        this.doSave();
-      } else if (!validateFn) {
-        //没有定义验证方法
-        this.doSave();
-      }
-    },
-    //保存处理
-    doSave() {
       this.process("save", this.entity, () => {
         this.status = "view";
         this.info("保存成功");
@@ -122,6 +112,7 @@ export default {
     doRemove() {
       this.process("remove", this.entity.id, () => {
         this.status = "blank";
+        this.info("删除成功");
         this.$refs.panel.close();
       });
     },

@@ -7,21 +7,21 @@
           :loading="loading"
           color="secondary"
           v-if="creatable && (status === 'view' || status === 'blank')"
-          @click="process('create')"
+          @click="create"
         />
         <q-btn
           label="保存"
           :loading="loading"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
-          @click="saveItem"
+          @click="save"
         />
         <q-btn
           label="编辑"
           :loading="loading"
           color="primary"
           v-if="editable && status === 'view'"
-          @click="process('edit')"
+          @click="edit"
         />
         <q-btn
           label="删除"
@@ -55,7 +55,9 @@
     </template>
 
     <template slot="left-actions">
-      <slot name="left-actions" />
+      <slot name="left-actions">
+        <q-btn flat dense icon="refresh" color="primary" @click="refresh" />
+      </slot>
     </template>
 
     <template slot="right">
@@ -78,7 +80,7 @@ export default {
       type: String,
       default: "id",
     },
-    listFn: {
+    requestFn: {
       type: Function,
     },
   },
@@ -110,16 +112,13 @@ export default {
     //刷新
     refresh() {
       if (this.list) {
-        this.itemList = this.list;
-        if (this.itemList.length > 0) {
-          this.entity = this.itemList[0];
-        }
+        this.$emit("refresh");
       } else {
-        let fnRet = this.callFn("list");
+        let fnRet = this.callFn("request");
         if (fnRet) {
           fnRet
             .then((ret) => {
-              this.listItem = this.list;
+              this.listItem = ret;
               if (this.itemList.length > 0) {
                 this.entity = this.itemList[0];
               }
@@ -129,6 +128,16 @@ export default {
             });
         }
       }
+    },
+    //新建
+    create() {
+      this.process("create", null, () => {
+        this.status = "create";
+      });
+    },
+    //编辑
+    edit() {
+      this.status = "edit";
     },
     //选择
     choose(item) {
@@ -171,7 +180,7 @@ export default {
       this.$emit("cancel");
     },
     //保存项目
-    saveItem() {
+    save() {
       let insert = this.isEmpty(this.entity.id);
       this.process("save", this.entity, (ret) => {
         this.status = "view";
@@ -189,10 +198,9 @@ export default {
     //删除操作
     doRemove() {
       this.process("remove", this.entity.id, () => {
+        this.$appHelper.info("删除成功");
         this.itemList.splice(this.itemList.indexOf(this.entity), 1);
-        if (this.lastItem) {
-          this.choose(this.lastItem);
-        } else if (this.itemList && this.itemList.length > 0) {
+        if (this.itemList && this.itemList.length > 0) {
           this.status = "view";
           this.choose(this.itemList[0]);
         } else {

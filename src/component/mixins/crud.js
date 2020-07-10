@@ -67,32 +67,53 @@ export default {
     this.entity = this.value;
   },
   methods: {
-    //处理
-    process(action, val, callback) {
+    /**
+     *
+     * @param {String} action  后台方法名称
+     * @param {Object} val 参数值
+     * @param {Function} success 成功回调方法
+     * @param {Function} error 失败回调方法
+     */
+    process(action, val, success, error) {
       this.loading = true;
+      let valid = true;
+      //前置方法
+      let beforeFn = this.findFn(
+        "before" + action.replace(action[0], action[0].toUpperCase())
+      );
+      if (beforeFn) {
+        valid = beforeFn(val);
+      }
+      if (!valid) {
+        this.loading = false;
+        return;
+      }
+      //处理方法
       let fnRet = this.callFn(action, val || this.entity);
       if (fnRet) {
         fnRet
           .then((ret) => {
+            this.loading = false;
             this.updateValue(ret);
-            if (typeof callback === "function") {
-              callback(this.entity);
+            if (typeof success === "function") {
+              success(this.entity);
             }
           })
           .catch((err) => {
+            this.loading = false;
             if (!err.processed) {
-              this.loading = false;
               this.error(err);
-            } else {
-              this.loading = false;
+            }
+            if (typeof error === "function") {
+              error(err);
             }
           });
         return true;
       } else if (this.$listeners[action]) {
         this.$emit(action);
         this.loading = false;
-        if (typeof callback === "function") {
-          callback(this.entity);
+        if (typeof success === "function") {
+          success(this.entity);
         }
         return true;
       } else {
