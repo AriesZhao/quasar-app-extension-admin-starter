@@ -178,7 +178,6 @@ function getLocalStore(appKey) {
       return null;
     }
   } catch (e) {
-    console.error(e);
     return null;
   }
 }

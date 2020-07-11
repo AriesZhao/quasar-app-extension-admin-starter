@@ -14,30 +14,35 @@
       <div class="q-gutter-sm">
         <q-btn
           label="新建"
+          :loading="loading"
           color="secondary"
           v-if="creatable && (status === 'view' || status === 'blank')"
           @click="create"
         />
         <q-btn
           label="保存"
+          :loading="loading"
           color="primary"
           v-if="status === 'create' || status === 'edit'"
-          @click="saveNode"
+          @click="save"
         />
         <q-btn
           label="编辑"
+          :loading="loading"
           color="primary"
           v-if="editable && status === 'view'"
           @click="edit"
         />
         <q-btn
           label="删除"
+          :loading="loading"
           color="negative"
           v-if="removable && status === 'view'"
           @click="remove"
         />
         <q-btn
           label="取消"
+          :loading="loading"
           color="secondary"
           v-if="status === 'edit' || status === 'create'"
           @click="cancel"
@@ -99,69 +104,83 @@ export default {
   data() {
     return {
       nodeList: [],
-      node: null,
       lastNode: null,
     };
   },
   watch: {
     nodes(val) {
       this.nodeList = val;
+      if (this.nodeList && this.nodeList.length > 0) {
+        this.choose(this.nodeList[0]);
+      }
     },
   },
   mounted() {
     this.nodeList = this.nodes;
-    this.node = this.entity;
+    if (this.nodeList && this.nodeList.length > 0) {
+      this.choose(this.nodeList[0]);
+    }
   },
   methods: {
     refresh() {
       this.$parent.refresh && this.$parent.refresh();
       this.$emit("refresh");
     },
+    //新建
+    create() {
+      this.process("create", null, (ret) => {
+        this.status = "create";
+      });
+    },
+    //编辑
+    edit() {
+      this.status = "edit";
+    },
+    //选择
     choose(node) {
       if (this.readonly) {
         this.status = "view";
         let ret = {};
-        if (this.nodeValue) {
-          Object.assign(ret, node[this.nodeValue]);
-        } else {
-          Object.assign(ret, node);
-        }
+        Object.assign(ret, node);
         this.lastNode = ret;
-        this.node = ret;
-        this.$emit("change", this.node);
+        this.entity = ret;
+        this.$emit("change", this.entity);
       }
     },
-    saveNode() {
-      this.saving = true;
-      let insert = this.$appHelper.isEmpty(this.entityVal.id);
-      this.$appHelper
-        .callFn("save", this, this.entityVal)
-        .then((ret) => {
-          this.saving = false;
-          this.status = "view";
-          this.entityVal = ret;
-          this.$appHelper.updateTree(this.nodeList, this.entityVal, insert);
-          this.$q.notify("保存成功");
-          this.$emit("change", this.entityVal);
-        })
-        .catch((err) => {
-          this.saving = false;
-          this.$appHelper.error(err);
-        });
+    //保存
+    save() {
+      let insert = this.isEmpty(this.entity.id);
+      this.process("save", this.entity, () => {
+        this.status = "view";
+        this.$appHelper.updateTree(this.nodeList, this.entity, insert);
+        this.$q.notify("保存成功");
+      });
     },
+    //删除确认
+    remove() {
+      this.confirm("确定要删除当前对象吗？", this.doRemove);
+    },
+    //删除操作
+    doRemove() {
+      this.process("remove", this.entity.id, () => {
+        this.$appHelper.removeTreeNode(this.nodeList, this.entity);
+        this.info("删除成功");
+      });
+    },
+    //取消
     cancel() {
-      if (this.lastINode) {
+      if (this.lastNode) {
         this.status = "view";
-        this.node = this.lastNode;
-        this.$emit("change", this.node);
-      } else if (this.nodes.length > 0) {
+        this.entity = this.lastNode;
+        this.$emit("change", this.entity);
+      } else if (this.nodeList.length > 0) {
         this.status = "view";
-        this.node = this.nodes[0];
-        this.$emit("change", this.node);
+        this.entity = this.nodeList[0];
+        this.$emit("change", this.entity);
       } else {
         this.status = "blank";
-        this.node = null;
-        this.$emit("change", this.node);
+        this.entity = null;
+        this.$emit("change", this.entity);
       }
       this.$parent.cancel && this.$parent.cancel();
       this.$emit("cancel");

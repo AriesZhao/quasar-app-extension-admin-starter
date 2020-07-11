@@ -185,6 +185,23 @@ export function updateTree(tree, entity, insert) {
 }
 
 /**
+ *
+ * @param {Array} tree
+ * @param {Object} entity
+ */
+export function removeTreeNode(tree, entity) {
+  let index = 0;
+  tree.forEach((node) => {
+    index++;
+    if (node.id === entity.id) {
+      tree.splice(index - 1, 1);
+    } else if (node.children) {
+      removeTreeNode(node.children, entity);
+    }
+  });
+}
+
+/**
  * 弹出确认对话框
  * @param {String} text
  * @param {Function} okFn
@@ -218,7 +235,7 @@ export function error(err) {
  */
 export function warn(msg) {
   Notify.create({
-    message: msg
+    message: msg,
   });
 }
 
@@ -229,7 +246,7 @@ export function warn(msg) {
 export function info(msg) {
   Notify.create({
     message: msg,
-    icon: 'announcement'
+    icon: "announcement",
   });
 }
 
@@ -238,16 +255,20 @@ export function info(msg) {
  * @param {String} name
  * @param {Vue Component} vm
  */
-export function getFn (name, vm) {
+export function getFn(name, vm) {
   // 1. 有方法定义
-  if (vm && vm[name + 'Fn']) {
-    return vm[name + 'Fn']
+  if (vm && vm[name + "Fn"]) {
+    return vm[name + "Fn"];
   }
   // 2. 父类有定义
-  if (vm.$parent && vm.$parent[name]) { return vm.$parent[name] }
+  if (vm.$parent && vm.$parent[name]) {
+    return vm.$parent[name];
+  }
   // 3. 有Service定义
-  if (vm.service && vm.service[name]) { return vm.service[name] }
-  return null
+  if (vm.service && vm.service[name]) {
+    return vm.service[name];
+  }
+  return null;
 }
 
 /**
@@ -256,14 +277,14 @@ export function getFn (name, vm) {
  * @param {Vue Component} vm
  * @param {Object} param
  */
-export function callFn (name, vm, param) {
-  let fn = getFn(name, vm)
+export function callFn(name, vm, param) {
+  let fn = getFn(name, vm);
   if (fn) {
-    return fn(param)
+    return fn(param);
   } else if (vm.$listeners[name]) {
-    vm.$emit(name, param)
+    vm.$emit(name, param);
     return new Promise((resolve) => {
-      resolve()
-    })
+      resolve();
+    });
   }
 }

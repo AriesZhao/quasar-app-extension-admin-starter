@@ -198,7 +198,7 @@ export default {
     //删除操作
     doRemove() {
       this.process("remove", this.entity.id, () => {
-        this.$appHelper.info("删除成功");
+        this.info("删除成功");
         this.itemList.splice(this.itemList.indexOf(this.entity), 1);
         if (this.itemList && this.itemList.length > 0) {
           this.status = "view";
