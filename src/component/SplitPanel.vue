@@ -1,5 +1,5 @@
 <template>
-  <panel class="split-panel">
+  <panel class="split-panel" @init="init">
     <template slot="actions">
       <slot name="actions" />
     </template>
@@ -11,7 +11,10 @@
     >
       <template v-slot:before>
         <q-card flat class="no-border-radius">
-          <q-toolbar class="toolbar bg-grey-3" v-if="leftTitle || $slots['left-actions']">
+          <q-toolbar
+            class="toolbar bg-grey-3"
+            v-if="leftTitle || $slots['left-actions']"
+          >
             <q-toolbar-title>
               {{ leftTitle }}
             </q-toolbar-title>
@@ -23,7 +26,10 @@
       </template>
       <template v-slot:after>
         <q-card flat class="no-border-radius">
-          <q-toolbar class="toolbar bg-grey-3" v-if="rightTitle || $slots['right-actions']">
+          <q-toolbar
+            class="toolbar bg-grey-3"
+            v-if="rightTitle || $slots['right-actions']"
+          >
             <q-toolbar-title>
               {{ rightTitle }}
             </q-toolbar-title>
@@ -41,8 +47,13 @@
 import base from "./layout/base";
 import SplitPanel from "./mixins/split-panel";
 export default {
-  name:'SplitPanel',
-  mixins: [base, SplitPanel]
+  name: "SplitPanel",
+  mixins: [base, SplitPanel],
+  methods: {
+    init() {
+      this.$emit("init");
+    },
+  },
 };
 </script>
 

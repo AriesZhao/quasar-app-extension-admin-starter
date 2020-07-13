@@ -1,6 +1,9 @@
 <template>
   <q-dialog v-model="showDlg" @input="onChange" :persistent="persistent">
-    <q-card style="min-height: 200px; min-width: 300px;">
+    <q-card
+      style="min-height: 200px; min-width: 300px;"
+      :style="{ width: width + 'px' }"
+    >
       <q-toolbar>
         <q-toolbar-title>
           {{ title }}
@@ -36,6 +39,10 @@ export default {
       type: String,
       default: "对话框",
     },
+    width: {
+      type: Number,
+      default: 300,
+    },
   },
   computed: {
     showFooter() {
@@ -56,12 +63,12 @@ export default {
     };
   },
   methods: {
-    show(){
-      this.showDlg = true
+    show() {
+      this.showDlg = true;
       this.$emit("change", this.showDlg);
     },
-    hide(){
-      this.showDlg = false
+    hide() {
+      this.showDlg = false;
       this.$emit("change", this.showDlg);
     },
     onChange(val) {

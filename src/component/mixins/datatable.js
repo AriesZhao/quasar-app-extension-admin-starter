@@ -100,6 +100,14 @@ export default {
       type: String,
       default: "保存成功",
     },
+    hideHeader: {
+      type: Boolean,
+      default: false,
+    },
+    hideTop: {
+      type: Boolean,
+      default: false,
+    },
     //服务模板
     service: {},
   },

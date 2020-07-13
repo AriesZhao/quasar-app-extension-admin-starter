@@ -9,13 +9,14 @@
       :pagination.sync="pagination"
       :rows-per-page-options="rowsPerPageOptions"
       :dense="dense"
+      :hide-header="hideHeader"
       @request="onRequest"
     >
       <template v-slot:loading>
         <q-inner-loading showing color="primary" />
       </template>
       <!--top left-->
-      <template v-slot:top-left>
+      <template v-slot:top-left v-if="!hideTop">
         <div class="row">
           <div v-if="title" class="table-title">{{ title }}</div>
           <q-btn
@@ -57,7 +58,7 @@
         </div>
       </template>
       <!--top right-->
-      <template v-slot:top-right>
+      <template v-slot:top-right v-if="!hideTop">
         <slot name="top-right" />
         <div
           class="row q-gutter-sm"
