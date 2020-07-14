@@ -4,14 +4,14 @@
       style="min-height: 200px; min-width: 300px;"
       :style="{ width: width + 'px' }"
     >
-      <q-toolbar>
+      <q-toolbar class="dialog-toolbar">
         <q-toolbar-title>
           {{ title }}
         </q-toolbar-title>
         <q-btn icon="close" flat round dense v-close-popup />
       </q-toolbar>
       <slot />
-      <q-card-actions v-if="showFooter" align="around">
+      <q-card-actions v-if="showFooter" align="around" class="dialog-footer">
         <slot name="footer" />
       </q-card-actions>
     </q-card>
@@ -78,3 +78,12 @@ export default {
   },
 };
 </script>
+
+<style>
+.dialog-toolbar {
+  border-bottom: 1px solid #ddd;
+}
+.dialog-footer {
+  border-top: 1px solid #ddd;
+}
+</style>

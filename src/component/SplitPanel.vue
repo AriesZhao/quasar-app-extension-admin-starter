@@ -10,34 +10,30 @@
       :reverse="reverse"
     >
       <template v-slot:before>
-        <q-card flat class="no-border-radius">
-          <q-toolbar
-            class="toolbar bg-grey-3"
-            v-if="leftTitle || $slots['left-actions']"
-          >
-            <q-toolbar-title>
-              {{ leftTitle }}
-            </q-toolbar-title>
-            <q-space />
-            <slot name="left-actions" />
-          </q-toolbar>
-          <slot name="left" />
-        </q-card>
+        <q-toolbar
+          class="toolbar bg-grey-3"
+          v-if="leftTitle || $slots['left-actions']"
+        >
+          <q-toolbar-title>
+            {{ leftTitle }}
+          </q-toolbar-title>
+          <q-space />
+          <slot name="left-actions" />
+        </q-toolbar>
+        <slot name="left" />
       </template>
       <template v-slot:after>
-        <q-card flat class="no-border-radius">
-          <q-toolbar
-            class="toolbar bg-grey-3"
-            v-if="rightTitle || $slots['right-actions']"
-          >
-            <q-toolbar-title>
-              {{ rightTitle }}
-            </q-toolbar-title>
-            <q-space />
-            <slot name="right-actions" />
-          </q-toolbar>
-          <slot name="right" />
-        </q-card>
+        <q-toolbar
+          class="toolbar bg-grey-3"
+          v-if="rightTitle || $slots['right-actions']"
+        >
+          <q-toolbar-title>
+            {{ rightTitle }}
+          </q-toolbar-title>
+          <q-space />
+          <slot name="right-actions" />
+        </q-toolbar>
+        <slot name="right" />
       </template>
     </q-splitter>
   </panel>

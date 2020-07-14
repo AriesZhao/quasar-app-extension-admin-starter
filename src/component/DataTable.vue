@@ -526,4 +526,6 @@ export default {
     width: 40px
   .action
     text-align: center
+  .q-table__bottom
+    border-top: none
 </style>
