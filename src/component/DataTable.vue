@@ -17,45 +17,47 @@
       </template>
       <!--top left-->
       <template v-slot:top-left v-if="!hideTop">
-        <div class="row">
-          <div v-if="title" class="table-title">{{ title }}</div>
-          <q-btn
-            v-if="requestFn"
-            icon="refresh"
-            dense
-            flat
-            color="positive"
-            @click="refresh"
-          />
-          <div v-if="editable">
+        <slot name="top-left">
+          <div class="row">
+            <div v-if="title" class="table-title">{{ title }}</div>
             <q-btn
-              v-if="creatable && hasEditorSlot"
-              icon="add_circle"
+              v-if="requestFn"
+              icon="refresh"
               dense
               flat
-              color="primary"
-              @click="createItem"
+              color="positive"
+              @click="refresh"
             />
-            <q-btn
-              v-if="editable && hasEditorSlot"
-              :disable="selectedItems.length !== 1"
-              icon="edit"
-              dense
-              flat
-              color="secondary"
-              @click="editItem(selectedItems[0])"
-            />
-            <q-btn
-              v-if="removable && hasEditorSlot"
-              :disable="selectedItems.length < 1"
-              icon="delete"
-              dense
-              flat
-              color="negative"
-              @click="removeItem"
-            />
+            <div v-if="editable">
+              <q-btn
+                v-if="creatable && hasEditorSlot"
+                icon="add_circle"
+                dense
+                flat
+                color="primary"
+                @click="createItem"
+              />
+              <q-btn
+                v-if="editable && hasEditorSlot"
+                :disable="selectedItems.length !== 1"
+                icon="edit"
+                dense
+                flat
+                color="secondary"
+                @click="editItem(selectedItems[0])"
+              />
+              <q-btn
+                v-if="removable && hasEditorSlot"
+                :disable="selectedItems.length < 1"
+                icon="delete"
+                dense
+                flat
+                color="negative"
+                @click="removeItem"
+              />
+            </div>
           </div>
-        </div>
+        </slot>
       </template>
       <!--top right-->
       <template v-slot:top-right v-if="!hideTop">

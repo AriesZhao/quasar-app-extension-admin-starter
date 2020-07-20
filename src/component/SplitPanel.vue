@@ -59,8 +59,4 @@ export default {
   top: 0px;
   z-index: 2;
 }
-.panel .toolbar .q-btn {
-  max-height: 36px;
-  margin-top: 10px;
-}
 </style>
