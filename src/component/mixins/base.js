@@ -65,7 +65,7 @@ export default {
      * @param {String} name
      * @param {Object} param
      */
-    callFn(name, param) {
+    callFn(name, param, defaultVal) {
       try {
         let fn = this.findFn(name);
         if (fn) {
@@ -81,6 +81,10 @@ export default {
           this.$emit(name, param);
           return new Promise((resolve) => {
             resolve();
+          });
+        } else {
+          return new Promise((resolve) => {
+            resolve(defaultVal);
           });
         }
       } catch (err) {

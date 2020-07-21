@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="showDlg" @input="onChange" :persistent="persistent">
     <q-card
-      style="min-height: 200px; min-width: 300px;"
+      style="min-height: 100px; min-width: 300px;"
       :style="{ width: width + 'px' }"
     >
       <q-toolbar class="dialog-toolbar">
