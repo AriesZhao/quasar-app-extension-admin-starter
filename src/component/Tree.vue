@@ -189,6 +189,12 @@ export default {
     },
     //保存
     save() {
+      this.$refs.form.validate().then((ret) => {
+        ret && this.doSave();
+      });
+    },
+    //保存处理
+    doSave() {
       this.loading = true;
       this.callFn("save", this.entity)
         .then((ret) => {
