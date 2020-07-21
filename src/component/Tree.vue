@@ -103,7 +103,9 @@ export default {
     },
     nodes: {
       type: Array,
-      default: [],
+      default() {
+        return [];
+      },
     },
     nodeKey: {
       type: String,
