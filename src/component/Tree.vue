@@ -147,6 +147,11 @@ export default {
     this.refresh();
   },
   methods: {
+    //取得节点Array
+    getNodeList() {
+      return this.nodeList;
+    },
+    //选择节点
     choose(node) {
       this.selection = node;
       this.$emit("change", this.selection);
