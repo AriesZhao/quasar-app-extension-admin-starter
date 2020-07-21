@@ -16,6 +16,8 @@
           flat
           no-caps
           :label="prop.node[labelKey]"
+          :color="prop.node === selection ? 'primary' : ''"
+          @click.stop="choose(prop.node)"
         >
           <q-popup-proxy context-menu>
             <q-list style="width: 100px;">
@@ -55,6 +57,7 @@
       <q-form ref="form" @submit="save">
         <div class="q-pa-md">
           <q-select
+            :readonly="readonly"
             v-if="entity"
             label="上级分类"
             v-model="entity.parentId"
@@ -83,7 +86,6 @@
             label="保存"
             color="primary"
             :loading="loading"
-            @click="$refs.form.submit()"
           />
         </div>
       </q-form>
@@ -96,7 +98,12 @@ import base from "./mixins/base";
 export default {
   name: "tree",
   mixins: [base],
+  model: {
+    prop: "value",
+    event: "change",
+  },
   props: {
+    value: {},
     title: {
       type: String,
       default: "节点信息",
@@ -127,6 +134,7 @@ export default {
   },
   data() {
     return {
+      selection: null,
       nodeList: [],
       nodeTree: [],
       dlg: false,
@@ -139,6 +147,10 @@ export default {
     this.refresh();
   },
   methods: {
+    choose(node) {
+      this.selection = node;
+      this.$emit("change", this.selection);
+    },
     //刷新
     refresh() {
       this.callFn("list", null, this.nodes).then((ret) => {
@@ -169,7 +181,7 @@ export default {
     edit(node) {
       this.callFn("get", node[this.nodeKey], Object.assign({}, node)).then(
         (ret) => {
-          this.readonly = true;
+          this.readonly = false;
           this.entity = ret;
           this.dlg = true;
         }
