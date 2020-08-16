@@ -27,7 +27,14 @@
         <!--Header Actions-->
         <slot name="actions" />
         <!--Settings-->
-        <q-btn dense flat round icon="settings" @click="right = !right" v-if="hasDrawer" />
+        <q-btn
+          dense
+          flat
+          round
+          icon="settings"
+          @click="right = !right"
+          v-if="hasDrawer"
+        />
       </q-toolbar>
     </q-header>
 
@@ -51,13 +58,25 @@
       </Sidebar>
     </q-drawer>
 
-    <q-drawer v-model="right" side="right" bordered elevated overlay v-if="hasDrawer">
+    <q-drawer
+      v-model="right"
+      side="right"
+      bordered
+      elevated
+      overlay
+      v-if="hasDrawer"
+    >
       <slot name="drawer" :app-info="_appInfo" />
     </q-drawer>
 
     <q-page-container>
       <q-tab-panels v-model="this.$route.path" animated keep-alive>
-        <q-tab-panel v-for="tab in tabList" :key="tab.url" :name="tab.url" style="padding: 0;">
+        <q-tab-panel
+          v-for="tab in tabList"
+          :key="tab.url"
+          :name="tab.url"
+          style="padding: 0;"
+        >
           <router-view />
         </q-tab-panel>
       </q-tab-panels>
@@ -134,6 +153,7 @@ export default {
     this.$store.unregisterModule(constants.NAMESPACE);
   },
   methods: {
+    //卸载前保存状态
     beforeunload() {
       if (this.$store.state[constants.NAMESPACE]) {
         localStorage.setItem(
@@ -146,7 +166,7 @@ export default {
 };
 
 /**
- * 取得本地资源
+ * 取得本地缓存
  */
 function getLocalStore(appKey) {
   try {
