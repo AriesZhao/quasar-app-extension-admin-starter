@@ -101,7 +101,7 @@ export default {
           })
           .catch((err) => {
             this.loading = false;
-            if (!err.processed) {
+            if (error && !err.processed) {
               this.error(err);
             }
             if (typeof error === "function") {

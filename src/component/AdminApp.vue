@@ -27,14 +27,7 @@
         <!--Header Actions-->
         <slot name="actions" />
         <!--Settings-->
-        <q-btn
-          dense
-          flat
-          round
-          icon="settings"
-          @click="right = !right"
-          v-if="hasDrawer"
-        />
+        <q-btn dense flat round icon="settings" @click="right = !right" v-if="hasDrawer" />
       </q-toolbar>
     </q-header>
 
@@ -58,25 +51,13 @@
       </Sidebar>
     </q-drawer>
 
-    <q-drawer
-      v-model="right"
-      side="right"
-      bordered
-      elevated
-      overlay
-      v-if="hasDrawer"
-    >
+    <q-drawer v-model="right" side="right" bordered elevated overlay v-if="hasDrawer">
       <slot name="drawer" :app-info="_appInfo" />
     </q-drawer>
 
     <q-page-container>
       <q-tab-panels v-model="this.$route.path" animated keep-alive>
-        <q-tab-panel
-          v-for="tab in tabList"
-          :key="tab.url"
-          :name="tab.url"
-          style="padding: 0;"
-        >
+        <q-tab-panel v-for="tab in tabList" :key="tab.url" :name="tab.url" style="padding: 0;">
           <router-view />
         </q-tab-panel>
       </q-tab-panels>
@@ -119,12 +100,16 @@ export default {
     this.hasDrawer = this.$slots.drawer || this.$scopedSlots.drawer;
   },
   created() {
+    //1.注册刷新事件处理
     window.addEventListener("beforeunload", this.beforeunload);
+    //2.加载本地缓存
     const localStore = getLocalStore(this.appKey);
     if (localStore != null) {
       adminStore.state = localStore;
     }
+    //3.注册 VUEX
     this.$store.registerModule(constants.NAMESPACE, adminStore);
+    //4.加载路由
     router(this.$router);
     const existing = this.tabList.find((item) => {
       return item.url === this.$route.path;
@@ -160,6 +145,9 @@ export default {
   },
 };
 
+/**
+ * 取得本地资源
+ */
 function getLocalStore(appKey) {
   try {
     const localStore = localStorage.getItem(appKey);

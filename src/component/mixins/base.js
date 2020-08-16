@@ -17,7 +17,7 @@ export default {
      * @param {Object}} err
      */
     error(err) {
-      this.$appHelper.error(msg);
+      this.$appHelper.error(err);
     },
     /**
      * 警告信息

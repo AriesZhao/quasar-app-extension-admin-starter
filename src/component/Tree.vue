@@ -78,7 +78,7 @@
         </div>
         <div
           class="q-pa-sm text-center"
-          style="border: 1px solid #ddd;"
+          style="border-top: 1px solid #ddd;"
           v-if="!readonly"
         >
           <q-btn

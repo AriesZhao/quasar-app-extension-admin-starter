@@ -1,14 +1,7 @@
 <template>
   <split-panel v-bind="$props">
     <template slot="left-actions">
-      <q-btn
-        icon="refresh"
-        flat
-        color="primary"
-        v-if="readonly"
-        @click="refresh"
-        dense
-      />
+      <q-btn icon="refresh" flat color="primary" v-if="readonly" @click="refresh" dense />
     </template>
     <template slot="right-actions">
       <div class="q-gutter-sm">
@@ -52,17 +45,9 @@
 
     <template slot="left">
       <div class="q-pa-sm">
-        <q-tree
-          :nodes="nodes"
-          :node-key="nodeKey"
-          default-expand-all
-          v-if="nodes.length > 0"
-        >
+        <q-tree :nodes="nodes" :node-key="nodeKey" default-expand-all v-if="nodes.length > 0">
           <template v-slot:default-header="props">
-            <div
-              @click.stop="choose(props.node)"
-              :class="{ 'cursor-pointer': readonly }"
-            >
+            <div @click.stop="choose(props.node)" :class="{ 'cursor-pointer': readonly }">
               <slot name="tree-node" :node="props.node" />
             </div>
           </template>
@@ -74,9 +59,9 @@
       <slot name="node" :status="status" :readonly="readonly" />
     </template>
 
-    <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"
-      ><slot :name="slot" v-bind="scope"
-    /></template>
+    <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+      <slot :name="slot" v-bind="scope" />
+    </template>
   </split-panel>
 </template>
 
@@ -128,7 +113,9 @@ export default {
     },
     //新建
     create() {
+      let parentId = this.entity.id;
       this.process("create", null, (ret) => {
+        this.entity.parentId = parentId;
         this.status = "create";
       });
     },
@@ -185,6 +172,10 @@ export default {
       this.$parent.cancel && this.$parent.cancel();
       this.$emit("cancel");
     },
+    //获取当前树的节点列表
+    getNodeList(){
+      return this.$appHelper.treeToArray(this.nodeList)
+    }
   },
 };
 </script>
