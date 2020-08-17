@@ -1,7 +1,14 @@
 <template>
   <split-panel v-bind="$props">
     <template slot="left-actions">
-      <q-btn icon="refresh" flat color="primary" v-if="readonly" @click="refresh" dense />
+      <q-btn
+        icon="refresh"
+        flat
+        color="primary"
+        v-if="readonly"
+        @click="refresh"
+        dense
+      />
     </template>
     <template slot="right-actions">
       <div class="q-gutter-sm">
@@ -45,9 +52,17 @@
 
     <template slot="left">
       <div class="q-pa-sm">
-        <q-tree :nodes="nodes" :node-key="nodeKey" default-expand-all v-if="nodes.length > 0">
+        <q-tree
+          :nodes="nodes"
+          :node-key="nodeKey"
+          default-expand-all
+          v-if="nodes.length > 0"
+        >
           <template v-slot:default-header="props">
-            <div @click.stop="choose(props.node)" :class="{ 'cursor-pointer': readonly }">
+            <div
+              @click.stop="choose(props.node)"
+              :class="{ 'cursor-pointer': readonly }"
+            >
               <slot name="tree-node" :node="props.node" />
             </div>
           </template>
@@ -85,6 +100,10 @@ export default {
     nodeValue: {
       type: String,
     },
+    refreshOnSave: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -101,15 +120,17 @@ export default {
     },
   },
   mounted() {
-    this.nodeList = this.nodes;
-    if (this.nodeList && this.nodeList.length > 0) {
-      this.choose(this.nodeList[0]);
-    }
+    this.refresh();
   },
   methods: {
+    //刷新树
     refresh() {
-      this.$parent.refresh && this.$parent.refresh();
-      this.$emit("refresh");
+      this.process("refresh", null, (ret) => {
+        this.nodeList = ret;
+        if (!this.entity && this.nodeList.length > 0) {
+          this.entity = this.nodeList[0];
+        }
+      });
     },
     //新建
     create() {
@@ -127,11 +148,20 @@ export default {
     choose(node) {
       if (this.readonly) {
         this.status = "view";
-        let ret = {};
-        Object.assign(ret, node);
-        this.lastNode = ret;
-        this.entity = ret;
-        this.$emit("change", this.entity);
+        if (this.findFn("get")) {
+          //定义了GET函数
+          this.process("get", node.id, (ret) => {
+            this.entity = ret;
+            this.$emit("change", this.entity);
+          });
+        } else {
+          //没有定义GET函数
+          let ret = {};
+          Object.assign(ret, node);
+          this.entity = ret;
+          this.lastNode = ret;
+          this.entity = ret;
+        }
       }
     },
     //保存
@@ -139,7 +169,11 @@ export default {
       let insert = this.isEmpty(this.entity.id);
       this.process("save", this.entity, () => {
         this.status = "view";
-        this.$appHelper.updateTree(this.nodeList, this.entity, insert);
+        if (this.refreshOnSave) {
+          this.refresh();
+        } else {
+          this.$appHelper.updateTree(this.nodeList, this.entity, insert);
+        }
         this.$q.notify("保存成功");
       });
     },
@@ -173,9 +207,9 @@ export default {
       this.$emit("cancel");
     },
     //获取当前树的节点列表
-    getNodeList(){
-      return this.$appHelper.treeToArray(this.nodeList)
-    }
+    getNodeList() {
+      return this.$appHelper.treeToArray(this.nodeList);
+    },
   },
 };
 </script>
