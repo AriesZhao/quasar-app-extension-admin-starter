@@ -72,9 +72,9 @@ export default {
      * @param {String} action  后台方法名称
      * @param {Object} val 参数值
      * @param {Function} success 成功回调方法
-     * @param {Function} error 失败回调方法
+     * @param {Function} failed 失败回调方法
      */
-    process(action, val, success, error) {
+    process(action, val, success, failed) {
       this.loading = true;
       let valid = true;
       //前置方法
@@ -89,36 +89,26 @@ export default {
         return;
       }
       //处理方法
-      let fnRet = this.callFn(action, val || this.entity);
-      if (fnRet) {
-        fnRet
+      let promise = this.callFn(action, val || this.entity);
+      if (promise) {
+        promise
           .then((ret) => {
             this.loading = false;
-            this.updateValue(ret);
             if (typeof success === "function") {
-              success(this.entity);
+              success(ret);
             }
           })
           .catch((err) => {
             this.loading = false;
-            if (error && !err.processed) {
-              this.error(err);
-            }
-            if (typeof error === "function") {
-              error(err);
+            if (failed && !err.processed) {
+              failed(err);
             }
           });
-        return true;
       } else if (this.$listeners[action]) {
         this.$emit(action);
         this.loading = false;
-        if (typeof success === "function") {
-          success(this.entity);
-        }
-        return true;
       } else {
         this.loading = false;
-        return false;
       }
     },
     //更新模型

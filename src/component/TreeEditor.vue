@@ -53,10 +53,10 @@
     <template slot="left">
       <div class="q-pa-sm">
         <q-tree
-          :nodes="nodes"
+          :nodes="nodeList"
           :node-key="nodeKey"
           default-expand-all
-          v-if="nodes.length > 0"
+          v-if="nodeList.length > 0"
         >
           <template v-slot:default-header="props">
             <div
@@ -74,7 +74,7 @@
       <slot name="node" :status="status" :readonly="readonly" />
     </template>
 
-    <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+    <template v-for="(key, slot) of $scopedSlots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope" />
     </template>
   </split-panel>
@@ -87,22 +87,12 @@ export default {
   name: "TreeEditor",
   mixins: [CRUD, SplitPanel],
   props: {
-    nodes: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
     nodeKey: {
       type: String,
       default: "id",
     },
-    nodeValue: {
-      type: String,
-    },
-    refreshOnSave: {
-      type: Boolean,
-      default: true,
+    refreshFn: {
+      type: Function,
     },
   },
   data() {
@@ -111,24 +101,18 @@ export default {
       lastNode: null,
     };
   },
-  watch: {
-    nodes(val) {
-      this.nodeList = val;
-      if (this.nodeList && this.nodeList.length > 0) {
-        this.choose(this.nodeList[0]);
-      }
-    },
-  },
   mounted() {
     this.refresh();
   },
   methods: {
-    //刷新树
+    //刷新
     refresh() {
       this.process("refresh", null, (ret) => {
         this.nodeList = ret;
-        if (!this.entity && this.nodeList.length > 0) {
-          this.entity = this.nodeList[0];
+        if (!this.entity && this.nodeList && this.nodeList.length > 0) {
+          this.choose(this.nodeList[0]);
+          this.lastNode = null;
+          this.status = "view";
         }
       });
     },
@@ -136,13 +120,15 @@ export default {
     create() {
       let parentId = this.entity.id;
       this.process("create", null, (ret) => {
-        this.entity.parentId = parentId;
+        ret.parentId = parentId;
+        this.updateValue(ret);
         this.status = "create";
       });
     },
     //编辑
     edit() {
       this.status = "edit";
+      this.$emit("edit", this.entity);
     },
     //选择
     choose(node) {
@@ -151,16 +137,15 @@ export default {
         if (this.findFn("get")) {
           //定义了GET函数
           this.process("get", node.id, (ret) => {
-            this.entity = ret;
-            this.$emit("change", this.entity);
+            this.updateValue(ret);
+            this.lastNode = ret;
           });
         } else {
           //没有定义GET函数
           let ret = {};
           Object.assign(ret, node);
-          this.entity = ret;
+          this.updateValue(ret);
           this.lastNode = ret;
-          this.entity = ret;
         }
       }
     },
@@ -168,12 +153,8 @@ export default {
     save() {
       let insert = this.isEmpty(this.entity.id);
       this.process("save", this.entity, () => {
+        this.refresh();
         this.status = "view";
-        if (this.refreshOnSave) {
-          this.refresh();
-        } else {
-          this.$appHelper.updateTree(this.nodeList, this.entity, insert);
-        }
         this.$q.notify("保存成功");
       });
     },
@@ -184,7 +165,7 @@ export default {
     //删除操作
     doRemove() {
       this.process("remove", this.entity.id, () => {
-        this.$appHelper.removeTreeNode(this.nodeList, this.entity);
+        this.refresh();
         this.info("删除成功");
       });
     },
@@ -192,18 +173,15 @@ export default {
     cancel() {
       if (this.lastNode) {
         this.status = "view";
-        this.entity = this.lastNode;
-        this.$emit("change", this.entity);
-      } else if (this.nodeList.length > 0) {
+        this.updateValue(this.lastNode);
+      } else if (this.nodeList && this.nodeList.length > 0) {
         this.status = "view";
-        this.entity = this.nodeList[0];
-        this.$emit("change", this.entity);
+        this.updateValue(this.nodeList[0]);
       } else {
         this.status = "blank";
-        this.entity = null;
-        this.$emit("change", this.entity);
+        this.$emit = null;
+        this.$emit("change");
       }
-      this.$parent.cancel && this.$parent.cancel();
       this.$emit("cancel");
     },
     //获取当前树的节点列表
