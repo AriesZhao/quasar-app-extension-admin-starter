@@ -73,15 +73,9 @@ export default {
   name: "ListEditor",
   mixins: [CRUD, SplitPanel],
   props: {
-    list: {
-      type: Array,
-    },
     itemKey: {
       type: String,
       default: "id",
-    },
-    requestFn: {
-      type: Function,
     },
   },
   data() {
@@ -90,44 +84,18 @@ export default {
       lastItem: null,
     };
   },
-  watch: {
-    list(val) {
-      this.itemList = val;
-      if (!this.entity && this.itemList && this.itemList.length > 0) {
-        this.choose(this.list[0]);
-      }
-    },
-  },
   mounted() {
-    if (this.list) {
-      this.itemList = this.list;
-    }
-    if (!this.isEmpty(this.entity)) {
-      this.choose(this.entity);
-    } else if (!this.entity && this.itemList && this.itemList.length > 0) {
-      this.choose(this.list[0]);
-    }
+    this.refresh();
   },
   methods: {
     //刷新
     refresh() {
-      if (this.list) {
-        this.$emit("refresh");
-      } else {
-        let fnRet = this.callFn("request");
-        if (fnRet) {
-          fnRet
-            .then((ret) => {
-              this.listItem = ret;
-              if (this.itemList.length > 0) {
-                this.entity = this.itemList[0];
-              }
-            })
-            .catch((err) => {
-              this.onError(err);
-            });
+      this.process("refresh", null, (ret) => {
+        this.itemList = ret;
+        if (!this.entity && this.itemList && this.itemList.length > 0) {
+          this.choose(this.itemList[0]);
         }
-      }
+      });
     },
     //新建
     create() {
@@ -167,9 +135,9 @@ export default {
         this.status = "view";
         this.entity = this.lastItem;
         this.$emit("change", this.entity);
-      } else if (this.list.length > 0) {
+      } else if (this.itemList.length > 0) {
         this.status = "view";
-        this.entity = this.list[0];
+        this.entity = this.itemList[0];
         this.$emit("change", this.entity);
       } else {
         this.status = "blank";
@@ -183,12 +151,8 @@ export default {
     save() {
       let insert = this.isEmpty(this.entity.id);
       this.process("save", this.entity, (ret) => {
+        this.refresh();
         this.status = "view";
-        if (insert) {
-          this.itemList.push(ret);
-        } else {
-          this.itemList.splice(this.itemList.indexOf(this.entity), 1, ret);
-        }
       });
     },
     //删除确认
@@ -198,15 +162,8 @@ export default {
     //删除操作
     doRemove() {
       this.process("remove", this.entity.id, () => {
+        this.refresh();
         this.info("删除成功");
-        this.itemList.splice(this.itemList.indexOf(this.entity), 1);
-        if (this.itemList && this.itemList.length > 0) {
-          this.status = "view";
-          this.choose(this.itemList[0]);
-        } else {
-          this.status = "view";
-          this.updateValue(null);
-        }
       });
     },
   },
