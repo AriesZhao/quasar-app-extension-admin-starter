@@ -1,5 +1,5 @@
 <template>
-  <split-panel v-bind="$props">
+  <split-panel v-bind="$props" @init="init">
     <template slot="left-actions">
       <q-btn
         icon="refresh"
@@ -105,6 +105,10 @@ export default {
     this.refresh();
   },
   methods: {
+    //初始化
+    init() {
+      this.$emit("init");
+    },
     //刷新
     refresh() {
       this.process("refresh", null, (ret) => {
