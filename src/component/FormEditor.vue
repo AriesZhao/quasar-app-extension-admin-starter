@@ -81,20 +81,23 @@ export default {
     },
     //新建
     create() {
-      this.process("create", null, () => {
+      this.process("create", null, (ret) => {
         this.status = "create";
+        this.updateValue(ret)
       });
     },
     //查看
     view(id) {
-      this.process("get", id, () => {
+      this.process("get", id, (ret) => {
         this.status = "view";
+        this.updateValue(ret)
       });
     },
     //编辑
     edit(id) {
-      this.process("get", id, () => {
+      this.process("get", id, (ret) => {
         this.status = "edit";
+        this.updateValue(ret)
       });
     },
     //保存
