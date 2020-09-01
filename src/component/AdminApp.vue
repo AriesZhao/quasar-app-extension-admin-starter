@@ -75,7 +75,7 @@
           v-for="tab in tabList"
           :key="tab.url"
           :name="tab.url"
-          style="padding: 0;"
+          style="padding: 0"
         >
           <router-view />
         </q-tab-panel>
@@ -130,10 +130,12 @@ export default {
     this.$store.registerModule(constants.NAMESPACE, adminStore);
     //4.加载路由
     router(this.$router);
-    const existing = this.tabList.find((item) => {
+    //5.当前URL对应的Tab
+    const activedTab = this.tabList.find((item) => {
       return item.url === this.$route.path;
     });
-    if (!existing && !(this.$route.meta && this.$route.meta.tab === false)) {
+    //6.如果当前Tab和URL不对应，则打开URL对应的Tab
+    if (!activedTab) {
       this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
         url: this.$route.path,
         title:
@@ -141,12 +143,6 @@ export default {
           this.$route.query.title ||
           this.$route.meta.title,
       });
-    }
-    const tab = this.tabList.find((item) => {
-      return item.selected;
-    });
-    if (tab && tab.url !== this.$route.path) {
-      this.$router.push({ path: tab.url });
     }
   },
   destroyed() {
