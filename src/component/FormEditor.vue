@@ -2,6 +2,12 @@
   <panel ref="panel" v-bind="$props" @init="init">
     <template slot="actions">
       <div class="q-gutter-sm">
+        <slot
+          name="actions"
+          :readonly="readonly"
+          :mode="status"
+          :form="entity"
+        />
         <q-btn
           label="新建"
           :loading="loading"
@@ -38,7 +44,7 @@
         />
       </div>
     </template>
-    
+
     <slot name="form" :readonly="readonly" :mode="status" />
   </panel>
 </template>
@@ -83,21 +89,21 @@ export default {
     create() {
       this.process("create", null, (ret) => {
         this.status = "create";
-        this.updateValue(ret)
+        this.updateValue(ret);
       });
     },
     //查看
     view(id) {
       this.process("get", id, (ret) => {
         this.status = "view";
-        this.updateValue(ret)
+        this.updateValue(ret);
       });
     },
     //编辑
     edit(id) {
       this.process("get", id, (ret) => {
         this.status = "edit";
-        this.updateValue(ret)
+        this.updateValue(ret);
       });
     },
     //保存

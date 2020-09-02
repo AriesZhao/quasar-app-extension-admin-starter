@@ -1,5 +1,5 @@
 <template>
-  <div class="tree q-pa-md">
+  <div class="tree">
     <q-tree
       :nodes="nodeTree"
       :node-key="nodeKey"
