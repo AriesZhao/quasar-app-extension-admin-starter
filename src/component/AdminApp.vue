@@ -135,7 +135,11 @@ export default {
       return item.url === this.$route.path;
     });
     //6.如果当前Tab和URL不对应，则打开URL对应的Tab
-    if (!activedTab) {
+    if (
+      !activedTab &&
+      //是Tab才能打开
+      (!this.$router.meta || this.router.tab === false)
+    ) {
       this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
         url: this.$route.path,
         title:
