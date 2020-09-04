@@ -138,7 +138,7 @@ export default {
     if (
       !activedTab &&
       //是Tab才能打开
-      (!this.$router.meta || this.router.tab === false)
+      !(this.$route.meta.tab !== null && this.$route.meta.tab === false)
     ) {
       this.$store.commit(constants.NAMESPACE + "/" + constants.OPEN_TAB, {
         url: this.$route.path,
