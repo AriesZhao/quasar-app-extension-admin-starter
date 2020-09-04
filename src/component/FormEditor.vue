@@ -85,39 +85,63 @@ export default {
         this.view(action);
       }
     },
-    //新建
+    //新建对象
     create() {
-      this.process("create", null, (ret) => {
-        this.status = "create";
-        this.updateValue(ret);
-      });
+      if (this.createFn) {
+        this.createFn();
+      } else if (this.$parent.create) {
+        this.create();
+      } else {
+        this.process("create", null, (ret) => {
+          this.status = "create";
+          this.updateValue(ret);
+        });
+      }
     },
-    //查看
+    //查看对象
     view(id) {
-      this.process("get", id, (ret) => {
-        this.status = "view";
-        this.updateValue(ret);
-      });
+      if (this.viewFn) {
+        this.viewFn(id);
+      } else if (this.$parent.view) {
+        this.$parent.view(id);
+      } else {
+        this.process("get", id, (ret) => {
+          this.status = "view";
+          this.updateValue(ret);
+        });
+      }
     },
-    //编辑
+    //编辑对象
     edit(id) {
-      this.process("get", id, (ret) => {
-        this.status = "edit";
-        this.updateValue(ret);
-      });
+      if (this.editFn) {
+        this.editFn(id);
+      } else if (this.$parent.edit) {
+        this.$parent.edit(id);
+      } else {
+        this.process("get", id, (ret) => {
+          this.status = "edit";
+          this.updateValue(ret);
+        });
+      }
     },
-    //保存
+    //保存对象
     save() {
-      this.process("save", this.entity, () => {
-        this.status = "view";
-        this.info("保存成功");
-      });
+      if (this.saveFn) {
+        this.saveFn();
+      } else if (this.$parent.save) {
+        this.$parent.save();
+      } else {
+        this.process("save", this.entity, () => {
+          this.status = "view";
+          this.info("保存成功");
+        });
+      }
     },
-    //删除确认
+    //删除对象确认
     remove() {
       this.confirm("确定要删除当前对象吗？", this.doRemove);
     },
-    //删除处理
+    //删除对象
     doRemove() {
       this.process("remove", this.entity.id, () => {
         this.status = "blank";

@@ -41,6 +41,10 @@ export default {
       type: Function,
     },
     service: {},
+    load: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -61,10 +65,14 @@ export default {
     value(val) {
       this.entity = val;
     },
+    load(val) {
+      this.loading = val;
+    },
   },
   mounted() {
     this.status = this.mode;
     this.entity = this.value;
+    this.loading = this.load;
   },
   methods: {
     /**
@@ -76,18 +84,6 @@ export default {
      */
     process(action, val, success, failed) {
       this.loading = true;
-      let valid = true;
-      //前置方法
-      let beforeFn = this.findFn(
-        "before" + action.replace(action[0], action[0].toUpperCase())
-      );
-      if (beforeFn) {
-        valid = beforeFn(val);
-      }
-      if (!valid) {
-        this.loading = false;
-        return;
-      }
       //处理方法
       let promise = this.callFn(action, val || this.entity);
       if (promise) {
