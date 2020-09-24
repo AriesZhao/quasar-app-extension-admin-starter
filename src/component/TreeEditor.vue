@@ -1,5 +1,5 @@
 <template>
-  <split-panel v-bind="$props" @init="init">
+  <split-panel v-bind="$props">
     <template slot="left-actions">
       <q-btn
         icon="refresh"
@@ -56,7 +56,7 @@
           :nodes="nodeList"
           :node-key="nodeKey"
           default-expand-all
-          v-if="nodeList.length > 0"
+          v-if="nodeList && nodeList.length > 0"
         >
           <template v-slot:default-header="props">
             <div
@@ -87,28 +87,26 @@ export default {
   name: "TreeEditor",
   mixins: [CRUD, SplitPanel],
   props: {
+    //节点主键
     nodeKey: {
       type: String,
       default: "id",
     },
+    //刷新方法
     refreshFn: {
       type: Function,
     },
   },
   data() {
     return {
-      nodeList: [],
-      lastNode: null,
+      nodeList: [], //节点列表
+      lastNode: null, //上个节点
     };
   },
   mounted() {
     this.refresh();
   },
   methods: {
-    //初始化
-    init() {
-      this.$emit("init");
-    },
     //刷新
     refresh() {
       this.process("refresh", null, (ret) => {
@@ -140,7 +138,7 @@ export default {
         this.status = "view";
         if (this.findFn("get")) {
           //定义了GET函数
-          this.process("get", node.id, (ret) => {
+          this.process("get", node[this.nodeKey], (ret) => {
             this.updateValue(ret);
             this.lastNode = ret;
           });
@@ -156,7 +154,8 @@ export default {
     //保存
     save() {
       let insert = this.isEmpty(this.entity.id);
-      this.process("save", this.entity, () => {
+      this.process("save", this.entity, (ret) => {
+        this.updateValue(ret);
         this.refresh();
         this.status = "view";
         this.$q.notify("保存成功");
