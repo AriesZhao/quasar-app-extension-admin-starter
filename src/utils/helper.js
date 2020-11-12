@@ -215,7 +215,9 @@ export function getFn(name, vm) {
     return vm.$parent[name];
   }
   // 3. 有Service定义
-  if (vm.service && vm.service[name]) {
+  if (vm.$parent.service && vm.$parent.service[name]) {
+    return vm.$parent.service[name];
+  } else if (vm.service && vm.service[name]) {
     return vm.service[name];
   }
   return null;
