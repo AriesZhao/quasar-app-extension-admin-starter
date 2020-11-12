@@ -17,21 +17,21 @@ export default {
      * @param {Object}} err
      */
     error(err) {
-      this.$appHelper.error(err);
+      this.$ui.error(err);
     },
     /**
      * 警告信息
      * @param {Object}} err
      */
     warn(msg) {
-      this.$appHelper.warn(msg);
+      this.$ui.warn(msg);
     },
     /**
      * 提示信息
      * @param {String}} msg
      */
     info(msg) {
-      this.$appHelper.info(msg);
+      this.$ui.info(msg);
     },
     /**
      * 确认
@@ -39,7 +39,7 @@ export default {
      * @param {Function} okFn
      */
     confirm(text, okFn) {
-      this.$appHelper.confirm(text, okFn);
+      this.$ui.confirm(text, okFn);
     },
     /**
      * 取得需要调用的方法

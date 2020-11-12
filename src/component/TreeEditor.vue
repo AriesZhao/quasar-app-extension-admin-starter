@@ -129,7 +129,14 @@ export default {
     },
     //编辑
     edit() {
-      this.status = "edit";
+      if (this.entity && this.entity.id) {
+        this.process("get", this.entity.id, (ret) => {
+          this.updateValue(ret);
+          this.status = "edit";
+        });
+      } else {
+        console.error("entity or entity.id is null");
+      }
       this.$emit("edit", this.entity);
     },
     //选择
@@ -153,9 +160,7 @@ export default {
     },
     //保存
     save() {
-      let insert = this.isEmpty(this.entity.id);
       this.process("save", this.entity, (ret) => {
-        this.updateValue(ret);
         this.refresh();
         this.status = "view";
         this.$q.notify("保存成功");
@@ -189,7 +194,7 @@ export default {
     },
     //获取当前树的节点列表
     getNodeList() {
-      return this.$appHelper.treeToArray(this.nodeList);
+      return this.$helper.treeToArray(this.nodeList);
     },
   },
 };

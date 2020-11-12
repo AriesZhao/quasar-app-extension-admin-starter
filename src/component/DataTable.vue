@@ -354,14 +354,14 @@ export default {
             this.loading = false;
             this.item = ret;
             if (this.showMessage) {
-              this.$appHelper.info(this.message);
+              this.$ui.info(this.message);
             }
             this.updateList(this.item);
             this.dialog = false;
           })
           .catch((err) => {
             this.loading = false;
-            this.$appHelper.error(err);
+            this.$ui.error(err);
           });
       } else {
         this.$emit("save", this.item);

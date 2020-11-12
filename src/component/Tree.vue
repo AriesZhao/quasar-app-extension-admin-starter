@@ -160,7 +160,7 @@ export default {
     refresh() {
       this.callFn("list", null, this.nodes).then((ret) => {
         this.nodeList = ret;
-        this.nodeTree = this.$appHelper.buildTree(this.nodeList);
+        this.nodeTree = this.$helper.buildTree(this.nodeList);
       });
     },
     //新建节点
