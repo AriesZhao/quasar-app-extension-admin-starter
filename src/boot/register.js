@@ -13,9 +13,11 @@ import InputCron from "../component/InputCron.vue";
 import InputRegion from "../component/InputRegion.vue";
 import Selection from "../component/Selection.vue";
 import Uploader from "../component/Uploader.vue";
-import * as appHelper from "../utils/helper";
+import * as helper from "../utils/helper";
+import * as ui from "../utils/ui";
 
-Vue.prototype.$appHelper = appHelper;
+Vue.prototype.$helper = helper;
+Vue.prototype.$ui = ui;
 
 // we globally register our component
 Vue.component("admin-app", AdminApp);
