@@ -21,7 +21,7 @@
         <q-popup-proxy ref="qTimeProxy" v-if="!readonly">
           <q-time
             v-model="dateValue"
-            mask="YYYY/MM/DD HH:mm"
+            mask="YYYY-MM-DD HH:mm"
             :minute-options="minuteOptions"
             format24h
           >
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { date } from "quasar";
 import input from "./mixins/input";
 
 export default {
@@ -65,6 +66,13 @@ export default {
   },
   mounted() {
     this.dateValue = this.value;
+    if (!this.dateValue && !this.showTime) {
+      let timeStamp = Date.now();
+      this.dateValue = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm");
+    } else if (!this.dateValue && this.showTime) {
+      let timeStamp = Date.now();
+      this.dateValue = date.formatDate(timeStamp, "YYYY-MM-DD HH:mm");
+    }
   },
   methods: {
     onInput(e) {
