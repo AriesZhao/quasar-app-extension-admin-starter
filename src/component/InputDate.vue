@@ -22,6 +22,7 @@
           <q-time
             v-model="dateValue"
             mask="YYYY-MM-DD HH:mm"
+            :hour-options="hourOptions"
             :minute-options="minuteOptions"
             format24h
           >
@@ -39,6 +40,34 @@
 import { date } from "quasar";
 import input from "./mixins/input";
 
+const hours = [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  ,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+];
+
 export default {
   name: "InputDate",
   mixins: [input],
@@ -51,6 +80,12 @@ export default {
       type: Array,
       default() {
         return [0, 15, 30, 45];
+      },
+    },
+    hourOptions: {
+      type: Array,
+      default() {
+        return hours;
       },
     },
   },
