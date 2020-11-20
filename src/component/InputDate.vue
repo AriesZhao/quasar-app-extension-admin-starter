@@ -1,7 +1,7 @@
 <template>
   <q-input
     class="input-date"
-    :readonly="readonly"
+    readonly
     :outlined="outlined"
     :label="label"
     v-model="dateValue"
