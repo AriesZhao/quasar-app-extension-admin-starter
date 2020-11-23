@@ -491,7 +491,7 @@ export default {
 
   .table-title
       font-size: 16px
-      line-height: 32px;
+      line-height: 32px
 
   tr th
     position: sticky
