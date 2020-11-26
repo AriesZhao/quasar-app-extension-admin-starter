@@ -169,6 +169,9 @@
           <slot name="body-expand" :row="props.row" />
         </q-tr>
       </template>
+      <template v-slot:bottom>
+        <slot name="bottom" />
+      </template>
     </q-table>
     <!--editor dialog-->
     <popup-dialog
@@ -490,8 +493,8 @@ export default {
   max-width: 100%
 
   .table-title
-      font-size: 16px
-      line-height: 32px;
+    font-size: 16px
+    line-height: 32px
 
   tr th
     position: sticky
