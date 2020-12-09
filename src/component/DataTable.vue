@@ -169,7 +169,7 @@
           <slot name="body-expand" :row="props.row" />
         </q-tr>
       </template>
-      <template v-slot:bottom>
+      <template v-slot:bottom v-if="$slots['bottom'] || $scopedSlots['bottom']">
         <slot name="bottom" />
       </template>
     </q-table>
